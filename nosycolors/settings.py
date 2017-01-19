@@ -84,7 +84,7 @@ ROOT_URLCONF = 'nosycolors.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -105,8 +105,12 @@ WSGI_APPLICATION = 'nosycolors.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': DATABASE_NAME,
+        'USER': USER_NAME,
+        'PASSWORD': DATABASE_KEY,
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -154,3 +158,4 @@ STATICFILES_DIRS = (
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
