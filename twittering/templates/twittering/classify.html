@@ -1,0 +1,27 @@
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Home</title>
+</head>
+
+<body>
+    {% block pagecontent %}
+    <h1>{{target_handle}}'s Words</h1> {% if tweets %}
+    <ul>
+        {% for tweet in tweets %}
+        <h5>Tweet:</h5>
+        <p>{{tweet.text}}</p>
+        <p>Feelings: {{tweet.emotion}}</p>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>You haven't uploaded any tweets yet.</p>
+    {% endif %}
+    <a href="{% url 'index' %}">Get Nosy</a>
+    <a href="{% url 'about' %}">About This Site</a> 
+    {% endblock %}
+</body>
+
+</html>

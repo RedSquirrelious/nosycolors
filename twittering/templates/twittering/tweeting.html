@@ -1,0 +1,29 @@
+{% extends 'twittering/base.html' %}
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Home</title>
+</head>
+
+<body>
+    {% block pagecontent %} {% if tweets %}
+    <h1>{{target.screen_name}} aka {{target.name}}</h1>
+    <ul>
+        {% for tweet in tweets %}
+        <h5>Tweet Text:</h5>
+        <p>{{tweet.text}}</p>
+        <h5>Tweet Emotions:</h5>
+        <p>{{tweet.emotion}}</p>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>{{target_handle}} hasn't uploaded any tweets yet.</p>
+    {% endif %}
+    <a href="{% url 'index' %}">Get Nosy</a>
+    <a href="{% url 'about' %}">About This Site</a> 
+    {% endblock %}
+</body>
+
+</html>
