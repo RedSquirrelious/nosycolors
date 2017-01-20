@@ -1,0 +1,68 @@
+ {% load static %}
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Home</title>
+</head>
+
+<body>
+    {% block pagecontent %}
+    {% if tweets %}
+    	<h1>{{target.screen_name}} aka {{target.name}}</h1>
+    	<!-- <h1>All About Being Nosy</h1> -->
+      {% for tweet in tweets %}
+        <h5>Tweet Text:</h5>
+        <p>{{tweet.text}}</p>
+        <h5>Tweet Emotions:</h5>
+        <p>{{tweet.emotion}}</p>
+       {% endfor %}   	
+    {%else%}
+    	 <p>{{target_handle}} hasn't uploaded any tweets yet.</p>
+    {% endif %}
+<div class='testpie'>
+</div>
+	<script src="//d3js.org/d3.v3.min.js"></script>
+
+    <!-- <script> -->
+<script type="text/javascript">
+
+var data = {{scores}};
+// var data = [[1, 1, 1], [1, 2, 3],
+// 	[ 1, 2, 3, 4 ],
+// // //   // [11975,  5871, 8916, 2868],
+// // //   // [ 1951, 10048, 2060, 6171],
+// // //   // [ 8010, 16145, 8090, 8045],
+// // //   // [ 1013,   990,  940, 6907]
+// ];
+
+
+var m = 10,
+    r = 100,
+    z = d3.scale.category20c();
+
+var svg = d3.select(".testpie").selectAll("svg")
+    .data(data)
+  .enter().append("svg")
+    .attr("width", (r + m) * 2)
+    .attr("height", (r + m) * 2)
+  .append("g")
+    .attr("transform", "translate(" + (r + m) + "," + (r + m) + ")");
+
+
+svg.selectAll("path")
+    .data(d3.layout.pie())
+  .enter().append("path")
+    .attr("d", d3.svg.arc()
+        .innerRadius(r / 2)
+        .outerRadius(r))
+    .style("fill", function(d, i) { return z(i); });
+
+
+    </script>
+    <a href="{% url 'index' %}"> Get Nosy </a> 
+    {% endblock %}
+</body>
+
+</html>
