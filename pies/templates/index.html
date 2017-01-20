@@ -1,0 +1,31 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Feeling Nosy?{% endblock %}</title>
+</head>
+<body>
+  {% block pagecontent %}
+<form action="pie_data/" method="post">
+
+    {% csrf_token %}
+
+    <label for="target_handle">Twitter Handle: </label>
+
+    <input id="target_handle" type="text" name="target_handle">
+
+    <label for="number_of_tweets">How many tweets?  (Max. is 100) </label>
+
+    <input id="number_of_tweets" type="integer" name="number_of_tweets">
+
+    
+
+
+    <input type="submit" value="OK">
+</form>
+
+  <a href="{% url 'about' %}">About</a> 
+  <a href="{% url 'pie_data' %}">Pies</a> 
+    {% endblock %}
+</body>
+
+</html>
