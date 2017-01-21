@@ -244,8 +244,11 @@ def pie_data(request):
 						one_emotion_list.append(emotion[0])
 						one_score_list.append(emotion[1])
 
+				all_emotion_list.append(one_emotion_list)
 				all_score_list.append(one_score_list)
-				tweet['emotion'] = one_emotion_list
+				
+				tweet['emotions'] = one_emotion_list
+				tweet['scores'] = one_score_list
 				those_tweets.append(tweet)
 	# print(all_score_list)
 	context = {'emotions': all_emotion_list, 'scores': all_score_list, 'target_handle': target_handle, 'target': target, 'tweets': those_tweets}
