@@ -1,5 +1,5 @@
 import csv
-
+import ast
 import json
 
 import os
@@ -14,7 +14,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .forms import HandleForm
+# from .forms import HandleForm
 
 
 # FOR LANGUAGE ANALYSIS
@@ -40,6 +40,24 @@ punct = list(string.punctuation)
 stopword_list = stopwords.words('english') + punct + ['rt', 'via', '...', '…']
 
 
+
+
+with open(os.path.dirname(__file__) + '../.env') as secrets:
+
+	lies = dict(ast.literal_eval(secrets.read()))
+	
+	SECRET_KEY = lies['SECRET_KEY']
+	USER_NAME = lies['USER_NAME']
+	DATABASE_NAME = lies['DATABASE_NAME']
+	DATABASE_KEY = lies['DATABASE_KEY']
+	CONSUMER_KEY = lies['CONSUMER_KEY']
+	CONSUMER_SECRET = lies['CONSUMER_SECRET']
+	ACCESS_TOKEN = lies['ACCESS_TOKEN']
+	ACCESS_SECRET =	lies['ACCESS_SECRET']
+	CALLBACK_URL = lies['CALLBACK_URL']
+	HOST = lies['HOST']
+
+
 # test_tweet1 = "@ZeroUtopia @democracynow Unfortunately his listening skills are not good enough for that level of meatiness. I'll probably do @BBC first"
 test_tweet2 = "RT @SUPGVNetwork: A toddler has now shot a person every week in America for two years straight. Yes, you read that correctly. https://t.co…"
 # test_tweet3 = "@ZeroUtopia I had to just grit my teeth and repeat in my head ... still better than FOX... still better than FOX.... UGH"
@@ -54,12 +72,6 @@ test_tweet2 = "RT @SUPGVNetwork: A toddler has now shot a person every week in A
 
 # 	return render(request, 'pie_data.html', context)
 
-class IndexView(TemplateView):
-    template_name = "index.html"
-
-class AboutView(TemplateView):
-    template_name = "about.html"
-
 
 
 # NEEDED FOR CLASSIFY
@@ -69,6 +81,8 @@ def process(text, tokenizer=TweetTokenizer(), stopwords=[]):
 	tokens = tokenizer.tokenize(text)
 
 	return [tok for tok in tokens if tok not in stopword_list and not tok.isdigit()]
+
+
 
 
 # NEEDED FOR CLASSIFY
@@ -108,11 +122,10 @@ def query_emolex(host, database, user, password, tweet):
 		# emotion_list.append(emotion_w_score)	
 		emotion_list[word['word']].append(emotion_w_score)
 
+
 	return emotion_list
 
-
-
-def find_strongest_emotions_in_tweet(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, tweet):
+def find_strongest_emotion_for_wordlist(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, tweet):
 
 	emotion_list = query_emolex(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, tweet)
 	final_scoring = dict()
@@ -122,11 +135,11 @@ def find_strongest_emotions_in_tweet(HOST, DATABASE_NAME, USER_NAME, DATABASE_KE
 		highest_score = max(emotion_list[word], key=itemgetter(1))[1]
 
 		final_scoring[word] = (highest_scoring_emotion, highest_score)
-	print(final_scoring)
+	# print(final_scoring)
 	return final_scoring
 
 
-
+scott = find_strongest_emotion_for_wordlist(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, test_tweet2)
 
 def show_top_emotion(emotion_dictionary):
 	emotion_hash = {"anger": 0, "anticipation": 0, "disgust": 0, "fear": 0, "joy": 0, "sadness": 0, "surprise": 0, "trust": 0}
@@ -151,104 +164,5 @@ def show_top_emotion(emotion_dictionary):
 			emotion_hash['trust'] += 1
 	return emotion_hash.items()
 
-#THIS ONE IS IN PROGRESS
-# def get_pie_data(request):
-
-# 	if request.method == 'POST':
-# 	    # create a form instance and populate it with data from the request:
-# 		form = HandleForm(request.POST)
-
-# 		if form.is_valid():
-
-# 			target_handle = form.cleaned_data['target_handle']
-# 			number_of_tweets = form.cleaned_data['number_of_tweets']
-			
-# 			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
-
-				
-# 			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
-# 			target = dict()
-# 			target['name'] = user.name
-# 			target['screen_name'] = user.screen_name
-
-# 			tweets = []
-
-# 			for raw_tweet in rawtweepy:
-# 				tweet = {}
-
-# 				tweet_words = process(raw_tweet.text)
-				
-# 				strongest_emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, tweet_words)
-
-# 				if strongest_emotions:
-# 					# strongest_emotions = ", ".join(strongest_emotions)
-# 					tweet['emotion'] = strongest_emotions
-# 				else:
-# 					tweet['emotion'] = 'Unable to process this tweet'
-
-# 				tweet['text'] = (raw_tweet.text)
-
-# 				tweets.append(tweet)
-
-
-
-# 			context = {'target_handle': target_handle, 'tweets': tweets, 'target': target }
-
-# # if a GET (or any other method) we'll create a blank form
-# 	else:
-# 		form = HandleForm()
-
-
-# 	return context
-
-
-#THIS ONE WORKS
-def pie_data(request):
-	if request.method == 'POST':
-	    # create a form instance and populate it with data from the request:
-		form = HandleForm(request.POST)
-
-		if form.is_valid():
-
-			target_handle = form.cleaned_data['target_handle']
-			number_of_tweets = form.cleaned_data['number_of_tweets']
-			
-			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
-
-				
-			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
-
-			target = dict()
-			target['name'] = user.name
-			target['screen_name'] = user.screen_name
-
-			those_tweets = []
-
-			all_emotion_list = []
-			all_score_list = []
-			
-			for test_tweet in rawtweepy:
-				one_score_list = []
-				one_emotion_list = []
-				tweet = {}
-				tweet['text']= test_tweet.text
-
-				# first_pass = process(test_tweet.text)
-				# print(first_pass)
-				emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, test_tweet.text)
-				# print(emotions)
-				count = show_top_emotion(emotions)
-				print(count)
-				for emotion in count:
-					if emotion[1] > 0:
-						one_emotion_list.append(emotion[0])
-						one_score_list.append(emotion[1])
-
-				all_score_list.append(one_score_list)
-				tweet['emotion'] = one_emotion_list
-				those_tweets.append(tweet)
-	# print(all_score_list)
-	context = {'emotions': all_emotion_list, 'scores': all_score_list, 'target_handle': target_handle, 'target': target, 'tweets': those_tweets}
-
-	return render(request, 'pie_data.html', context)
+print(show_top_emotion(scott))
 
