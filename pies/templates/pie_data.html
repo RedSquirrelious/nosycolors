@@ -16,7 +16,9 @@
         <h5>Tweet Text:</h5>
         <p>{{tweet.text}}</p>
         <h5>Tweet Emotions:</h5>
-        <p>{{tweet.emotion}}</p>
+        <p>{{tweet.emotions}}</p>
+        <p>{{tweet.scores}}</p>
+
        {% endfor %}   	
     {%else%}
     	 <p>{{target_handle}} hasn't uploaded any tweets yet.</p>
@@ -29,14 +31,6 @@
 <script type="text/javascript">
 
 var data = {{scores}};
-// var data = [[1, 1, 1], [1, 2, 3],
-// 	[ 1, 2, 3, 4 ],
-// // //   // [11975,  5871, 8916, 2868],
-// // //   // [ 1951, 10048, 2060, 6171],
-// // //   // [ 8010, 16145, 8090, 8045],
-// // //   // [ 1013,   990,  940, 6907]
-// ];
-
 
 var m = 10,
     r = 100,
