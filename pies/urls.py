@@ -5,4 +5,5 @@ urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'), # Notice the URL has been named
     url(r'^about/$', views.AboutView.as_view(), name='about'),
     url(r'^pie_data/$', views.pie_data, name='pie_data'),
+    url(r'^test_pie/$', views.test_pie, name='test_pie'),
 ]
