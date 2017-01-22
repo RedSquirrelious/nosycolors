@@ -1,5 +1,5 @@
  {% load static %}
-<!-- <!DOCTYPE html> -->
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,9 +9,10 @@
 
 <body>
     {% block pagecontent %}
+
     {% if tweets %}
     	<h1>{{target.screen_name}} aka {{target.name}}</h1>
-    	<!-- <h1>All About Being Nosy</h1> -->
+    	<h1>All About Being Nosy</h1>
       {% for tweet in tweets %}
         <h5>Tweet Text:</h5>
         <p>{{tweet.text}}</p>
@@ -22,19 +23,30 @@
        {% endfor %}   	
     {%else%}
     	 <p>{{target_handle}} hasn't uploaded any tweets yet.</p>
-    {% endif %}
+    {% endif %} 
 <div class='testpie'>
 </div>
 	<script src="//d3js.org/d3.v3.min.js"></script>
 
-    <!-- <script> -->
+
 <script type="text/javascript">
 
-var data = {{scores}};
+// var emotions = {{emotions|safe }};
+
+// var test_data = {{color_scores|safe}};
+
+
+var data = [[2,4,2], [2,4,2, 2]];
+// var data = {{scores}};
+
+
+
+var color = d3.scale.ordinal()
+	.range(["#e34141", "#4545ec", "#652e2e", "#272323", "#eeee4b", "#808080", "#944fba", "#22c322"]);
+	// .range(red, blue, brown, black, yellow, grey, purple,green)
 
 var m = 10,
-    r = 100,
-    z = d3.scale.category20c();
+    r = 100;
 
 var svg = d3.select(".testpie").selectAll("svg")
     .data(data)
@@ -51,11 +63,12 @@ svg.selectAll("path")
     .attr("d", d3.svg.arc()
         .innerRadius(r / 2)
         .outerRadius(r))
-    .style("fill", function(d, i) { return z(i); });
+    .style("fill", function(d, i) { return color(i); });
 
 
-    </script>
+</script>
     <a href="{% url 'index' %}"> Get Nosy </a> 
+    <a href="{% url 'test_pie' %}">Test Pies</a>
     {% endblock %}
 </body>
 
