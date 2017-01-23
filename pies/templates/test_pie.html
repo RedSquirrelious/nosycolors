@@ -15,17 +15,16 @@
 </div>
 	<script src="//d3js.org/d3.v3.min.js"></script>
 
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
 <script type='text/javascript' >
+
+var $el = d3.select(".testpie")
 
 var something = {{tweets|safe}};
 
 var tweet_text = ["gerber baby", "sing me a song"];
 
 
-
-// var data = {{data|safe}};
-// var data = [[2,4,2, 0, 0, 0, 5, 0], [2,4,2,2,2,4,2,2]];
 
 var label = d3.scale.ordinal()
 .range(["anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"]);
@@ -59,6 +58,7 @@ var pie = d3.layout.pie()
     .sort(null);
     // .sort(function(a, b) { return b.score - a.score; });
 
+var data = {};
 
 var tweet_scoring = d3.nest()
 		.key(function(d) { return d.tweet_id; })
@@ -67,63 +67,64 @@ var tweet_scoring = d3.nest()
 var tweet_emoting = d3.nest()
 		.key(function(d) { return d.tweet_id; })
 		.entries(something);
-
-var div = d3.select(".testpie").append("div")	
-    .attr("class", "tooltip")				
-    .style("opacity", 0);
-
+    
 var svg = d3.select(".testpie").selectAll("svg")
-		.data(tweet_scoring)
-		.enter().append("svg")
-	    .attr("width", (r + m) * 2)
-	    .attr("height", (r + m) * 2)
-	    .attr("class", "tweet")
-	  	.attr("id", function(d, i) {return "tweet_" + i; })
-  	.append("g")
-    .attr("transform", "translate(" + (r + m) + "," + (r + m) + ")");
+			.data(tweet_scoring)
+			.enter().append("svg")
+		    .attr("width", (r + m) * 2)
+		    .attr("height", (r + m) * 2)
+		    .attr("class", "tweet")
+		  	.attr("id", function(d, i) {return "tweet_" + i; })
+  		.append("g")
+    	.attr("transform", "translate(" + (r + m) + "," + (r + m) + ")");
 
 svg.append("text")
+	.each(function(d) { this._current = d;})
   .attr("dy", ".35em")
   .attr("text-anchor", "middle")
   .attr("class", "tweet_text")
-  .attr("id", function(d, i) { return "tweet_text_" + i; })
-  .text(function(d, i) { return tweet_text[i]; });
+  // .text(function(d) {return this._current.key;})
+  .attr("id", function(d) { return "tweet_text_" + this._current.key; });
+  // .attr("id", function(d, i) { return "tweet_text_" + i; })
+  // .text(function(d, i) { return tweet_text[i]; });
 
 var g = svg.selectAll('g')
 	.data(function(d) { return pie(d.values); })
 	.enter().append('g');
 
   g.append("path")
+  		.each(function(d) { this._current = d; })
       .attr("d", arc)
       .attr("class", "emotionArc")
+      // .attr("class", this._current.data.tweet_id)
 	 		.attr("id", function(d, i) {return "emotionArc_" + i; })
-      .style("fill", function(d) { return color(d.data.emotion); })
-       .on("mouseover", function(d) {		
-            div.transition()		
-                .duration(200)		
-                .style("opacity", .9);		
-            div	.html(d.data.emotion)
-                .style("left", (d3.event.pageX) + "px")		
-                .style("top", (d3.event.pageY - 28) + "px");	
-            })					
-        .on("mouseout", function(d) {		
-            div.transition()		
-                .duration(500)		
-                .style("opacity", 0);	
+      .style("fill", function(d) { return color(d.data.emotion); });
+
+      g.append("text")
+          .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+          .attr("dy", ".35em")
+          .style("text-anchor", "middle");
+
+      g.select("text").text(function(d) { return d.data.emotion; });      
+
+      g.on("mouseover", function(obj){
+        console.log(obj.data.emotion)
+        svg.select("#tweet_text_"+ obj.data.tweet_id)
+        .attr("fill", function(d) { return color(obj.data.emotion); })
+        .attr("font-weight", "bold")
+        .style("font-size", r/5.5+"px")
+        .text(function(d){
+          return obj.data.emotion;
         });
+      });
+
+      g.on("mouseout", function(obj){
+        svg.select("text.text-tooltip").text("");
+      });
 
 
-  g.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("text")
-      .attr("dy", ".35em")
-      .attr("text-anchor", "middle")
-      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")"; })
-      .text(function(d) { return d.data.emotion; });
 
-  // Computes the label angle of an arc, converting from radians to degrees.
-  function angle(d) {
-    var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
-    return a > 90 ? a - 180 : a;
-  }
+  
 
 
 

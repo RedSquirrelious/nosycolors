@@ -232,6 +232,7 @@ def pie_data(request):
 				one_emotion_list = []
 				tweet = {}
 				tweet['text']= test_tweet.text
+				tweet['id'] = test_tweet.id_str
 
 				emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, test_tweet.text)
 
@@ -247,36 +248,40 @@ def pie_data(request):
 				# all_score_list.append(one_score_list)
 				# all_color_scores.append(color_score)
 				count = show_top_emotion(emotions)
-				color_score = {}
-				color_score['emotions'] = []
-				color_score['scores'] = []
-				tweet_color_scores = []
+				# color_score = {}
+				# color_score['emotions'] = []
+				# color_score['scores'] = []
+				# tweet_color_scores = []
 				for emotion in count:
+					one_emotion_hash = {}
 					# color_score[emotion[0]] = emotion[1]
 					# one_emotion_list.append(emotion[0])
-					one_score_list.append(emotion[1])
+					# one_score_list.append(emotion[1])
 					if emotion[1] > 0:
 						one_emotion_list.append(emotion[0])
-
-					color_score['emotions'].append(emotion[0])
-					color_score['scores'].append(emotion[1])
+						one_emotion_hash['emotion'] = emotion[0]
+						one_emotion_hash['score'] = emotion[1]
+						one_emotion_hash['tweet_id'] = test_tweet.id
+						those_tweets.append(one_emotion_hash)
+					# color_score['emotions'].append(emotion[0])
+					# color_score['scores'].append(emotion[1])
 				# one_emotion_list.append(emotion[0])
 				# one_score_list.append(emotion[1])
 
-				tweet_color_scores.append(color_score)
+				# tweet_color_scores.append(color_score)
 
-				all_emotion_list.append(one_emotion_list)
-				all_score_list.append(one_score_list)
-				all_color_scores.append(tweet_color_scores)
+				# all_emotion_list.append(one_emotion_list)
+				# all_score_list.append(one_score_list)
+				# all_color_scores.append(tweet_color_scores)
 				
-				tweet['emotions'] = one_emotion_list
-				tweet['scores'] = one_score_list
+				# tweet['emotions'] = one_emotion_list
+				# tweet['scores'] = one_score_list
 				
-				those_tweets.append(tweet)
-				print(those_tweets)
+				# those_tweets.append(tweet)
+				# print(those_tweets)
 
 	# # print(all_score_list)
-	context = {'emotions': json.dumps(all_emotion_list), 'scores': all_score_list, 'target_handle': target_handle, 'target': target, 'tweets': those_tweets, 'color_scores': json.dumps(all_color_scores)}
+	context = {'emotions': json.dumps(all_emotion_list), 'scores': all_score_list, 'target_handle': target_handle, 'target': target, 'tweets': json.dumps(those_tweets), 'color_scores': json.dumps(all_color_scores)}
 				# context = {'word': "smile"}
 	return render(request, 'pie_data.html', context)
 
@@ -289,7 +294,7 @@ def test_pie(request):
 	# context = {'data': [{'scores': [2,4,2], 'emotions':['anticipation', 'joy', 'trust']}, {'emotions': ['surprise', 'anger', 'fear', 'disgust'], 'scores': [2, 4, 3, 1]}]}
 
 
-	tweets = [{'tweet_id': 1234, 'emotion': 'anticipation', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'joy', 'score': 7, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'sadness', 'score': 1, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234, 'emotion': 'anger', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 456, 'emotion': 'disgust', 'score': 4, 'tweet_text': 'no way'}, {'tweet_id': 456, 'emotion': 'fear', 'score': 5, 'tweet_text': 'no way'}]
+	tweets = [{'tweet_id': 1234, 'emotion': 'anticipation', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'joy', 'score': 7, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'sadness', 'score': 1, 'tweet_text': 'gerber baby'}, {'tweet_id': 456, 'emotion': 'anger', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 456, 'emotion': 'disgust', 'score': 4, 'tweet_text': 'no way'}, {'tweet_id': 456, 'emotion': 'fear', 'score': 2, 'tweet_text': 'no way'}]
 
 	context = {'tweets': json.dumps(tweets)}
 
