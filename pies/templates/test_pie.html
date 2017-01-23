@@ -1,0 +1,136 @@
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome Home</title>
+</head>
+
+<body>
+    {% block pagecontent %}
+    <p>{{tweets}}</p>
+
+<div class='testpie'>
+</div>
+	<script src="//d3js.org/d3.v3.min.js"></script>
+
+
+<script type='text/javascript' >
+
+var something = {{tweets|safe}};
+
+var tweet_text = ["gerber baby", "sing me a song"];
+
+
+
+// var data = {{data|safe}};
+// var data = [[2,4,2, 0, 0, 0, 5, 0], [2,4,2,2,2,4,2,2]];
+
+var label = d3.scale.ordinal()
+.range(["anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"]);
+
+
+var color = d3.scale.ordinal()
+	.domain(["anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"])
+	.range(["#e34141", "#4545ec", "#652e2e", "#272323", "#eeee4b", "#808080", "#944fba", "#22c322"]);
+	// .range(red, blue, brown, black, yellow, grey, purple,green)
+
+var m = 10,
+    r = 100;
+
+
+var scoring = function(d) {
+	console.log(d);
+	return d.sentiment.score;
+};
+
+var pie = d3.layout.pie()
+	.value( function(d) { return d.scores; })
+	.padAngle(.01)
+	.sort(null);
+
+var arc = d3.svg.arc()
+        .innerRadius(r / 2)
+        .outerRadius(r);
+
+var pie = d3.layout.pie()
+    .value(function(d) { return +d.score; })
+    .sort(null);
+    // .sort(function(a, b) { return b.score - a.score; });
+
+
+var tweet_scoring = d3.nest()
+		.key(function(d) { return d.tweet_id; })
+		.entries(something);
+
+var tweet_emoting = d3.nest()
+		.key(function(d) { return d.tweet_id; })
+		.entries(something);
+
+var div = d3.select(".testpie").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+var svg = d3.select(".testpie").selectAll("svg")
+		.data(tweet_scoring)
+		.enter().append("svg")
+	    .attr("width", (r + m) * 2)
+	    .attr("height", (r + m) * 2)
+	    .attr("class", "tweet")
+	  	.attr("id", function(d, i) {return "tweet_" + i; })
+  	.append("g")
+    .attr("transform", "translate(" + (r + m) + "," + (r + m) + ")");
+
+svg.append("text")
+  .attr("dy", ".35em")
+  .attr("text-anchor", "middle")
+  .attr("class", "tweet_text")
+  .attr("id", function(d, i) { return "tweet_text_" + i; })
+  .text(function(d, i) { return tweet_text[i]; });
+
+var g = svg.selectAll('g')
+	.data(function(d) { return pie(d.values); })
+	.enter().append('g');
+
+  g.append("path")
+      .attr("d", arc)
+      .attr("class", "emotionArc")
+	 		.attr("id", function(d, i) {return "emotionArc_" + i; })
+      .style("fill", function(d) { return color(d.data.emotion); })
+       .on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(d.data.emotion)
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        });
+
+
+  g.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("text")
+      .attr("dy", ".35em")
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")"; })
+      .text(function(d) { return d.data.emotion; });
+
+  // Computes the label angle of an arc, converting from radians to degrees.
+  function angle(d) {
+    var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+    return a > 90 ? a - 180 : a;
+  }
+
+
+
+</script>
+    <a href="{% url 'index' %}"> Get Nosy </a> 
+    <a href="{% url 'test_pie' %}">Test Pies</a>
+    {% endblock %}
+</body>
+
+</html>

@@ -1,20 +1,50 @@
-
-{% load static %}
+ {% load static %}
 <!-- <!DOCTYPE html> -->
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title>
-      Nosy Colors - {% block title %}{% endblock %}
+        Nosy Colors - {% block title %}{% endblock %}
     </title>
+    <script src="{% static 'js/main.js' %}"></script>
+    <!-- This is how to include a static file -->
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/foundation.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
 
-    <script src="{% static 'js/main.js' %}"></script> <!-- This is how to include a static file -->
-    <link rel="stylesheet" href="{% static 'css/main.css' %}" type="text/css" />
-  </head>
-  <body>
-    <div class="container">
-      {% block pagecontent %}
-      {% endblock %}
+<body class="wrapper">
+    <div class="top-bar">
+        <div class="top-bar-title">
+            <h1>Feeling Nosy?</h1></div>
+        <div>
+            <div class="top-bar-left"></div>
+            <div class="top-bar-right"></div>
+        </div>
     </div>
-  </body>
+    <header class="set-header">
+        <nav>
+            <!--     	<ul class="row">
+      	<li class="small-3 columns">
+        	<a href="/">
+					<img src="/assets/totorochu_pikatoro.png" class="set-header">
+					</a>
+				</li>
+				<li class="small-9 columns">
+					<h1 class="set-header"></h1>
+				</li>
+			</ul> -->
+        </nav>
+    </header>
+    <div class="container">
+        {% block pagecontent %} {% endblock %}
+    </div>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.js' %}"></script>
+    <script src="{% static 'js/vendor/what-input.js' %}"></script>
+    <script src="{% static 'js/vendor/foundation.js' %}"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+
 </html>

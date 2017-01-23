@@ -1,5 +1,42 @@
+
+.top-bar {
+	background-color: "#4545ec";
+}
+
+body.wrapper {
+	margin-left: 2em;
+}
+
+img.set-header  {
+	width: 100%;
+	vertical-align: middle;
+	margin-left: 0;
+}
+
+.set-header nav ul {
+	list-style: none;
+	font-size: 1.5rem;
+}
+
+h1.set-header {
+	font-family: verdana;
+	margin-top: .2em;
+	margin-bottom: .2em
+}
 .container {
-    background: #eac656;
     margin: 10 10 10 10;
     border: 3px solid black;
+}
+
+div.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    width: 60px;					
+    height: 28px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
 }
