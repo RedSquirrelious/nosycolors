@@ -7,7 +7,8 @@
 </head>
 <body>
   {% block pagecontent %}
-<form action="pie_data/" method="post">
+<section class="form_wrapper">
+<form action="pie_data/" method="post" class="small-6 columns" id="nosy_form">
 
     {% csrf_token %}
 
@@ -24,7 +25,7 @@
 
     <input type="submit" value="OK">
 </form>
-
+</section>
     {% endblock %}
 </body>
 

@@ -6,12 +6,13 @@ header.row {
 a.page_title {
 	color: white;
 }
+
 .wrapper {
-	padding: 5%;
-	display: flex;
-	justify-content: center;
-	margin-left: 1em;
+	padding: 0 5%;
+	display: block;
+
 }
+
 
 .form-wrapper {
 	padding: 5%;
@@ -19,10 +20,12 @@ a.page_title {
 	justify-content: center;
 }
 
-/*.set-header nav ul {
-	list-style: none;
-	font-size: 1.5rem;
-}*/
+#nosy_form {
+	width: 50%;
+	position: relative;
+}
+
+
 nav {
 	display: flex;
 	justify-content: center;
@@ -46,9 +49,25 @@ h1.set-header {
 a {
 	color: black;
 }
-.container {
-    margin: 10 10 10 10;
-    border: 3px solid black;
+
+.nosy_query {
+	margin: 1% 0 1% 0;
+}
+
+#hold_tweetview {
+	display: flex;
+	justify-content: center;
+}
+
+#tweet_view {
+	display: block;
+	margin: 0% 5% 2% 15%;
+	font-size: .8em;
+
+}
+
+.testpie {
+
 }
 
 
@@ -60,3 +79,11 @@ a {
 	float: center;
 }
 
+.about_header {
+	display:block;
+	width: 80%;
+}
+
+.about_text {
+
+}

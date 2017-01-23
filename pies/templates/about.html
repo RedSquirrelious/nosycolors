@@ -1,17 +1,14 @@
-<!-- <!DOCTYPE html> -->
+{% extends 'twittering/base.html' %}
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Welcome Home</title>
+  <meta charset="UTF-8">
+  <title>{% block title %}Feeling Nosy?{% endblock %}</title>
 </head>
-
-<body>
-    {% block pagecontent %}
-    <h1>All About Being Nosy</h1>
-    <p>I'm trying to play with data and color. It's turning out how it's turning out.</p>
-    <a href="{% url 'index' %}">Get Nosy</a> 
-    <a href="{% url 'test_pie' %}">Test Pies</a>
+<body class="about row">
+  {% block pagecontent %}
+    <h3 class="about_header row">All About Being Nosy</h3>
+    <p class="about_text row">I'm trying to play with data and color. It's turning out how it's turning out.</p>
     {% endblock %}
 </body>
 

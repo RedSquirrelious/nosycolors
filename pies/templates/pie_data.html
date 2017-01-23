@@ -15,42 +15,50 @@
 </head>
 
 <body>
+
     {% block pagecontent %}
-    <!-- {{tweets}} -->
-<!--     {% if tweets %}
-    	<h1>{{target.screen_name}} aka {{target.name}}</h1>
-    	<h1>All About Being Nosy</h1>
-      {% for tweet in tweets %}
-        <h5>Tweet Text:</h5>
-        <p>{{tweet.text}}</p>
-        <h5>Tweet Emotions:</h5>
-        <p>{{tweet.emotions}}</p>
-        <p>{{tweet.scores}}</p>
-
-       {% endfor %}   	
-    {%else%}
-    	 <p>{{target_handle}} hasn't uploaded any tweets yet.</p>
-    {% endif %}  -->
-<!-- <div class="top-bar"> -->
 
 
-    <!-- </div> -->
+
     <header class="row">
         <a href="{% url 'index' %}" class='page_title'><h1 class='small-9 columns'>Feeling Nosy?</h1></a>
+      
       <nav class='small-3 columns'>
         <a href="{% url 'index' %}" class='small-3 columns button'>Get Nosy</a>
         <a href="{% url 'test_pie' %}" class='small-3 columns button'>Test</a>
         <a href="{% url 'about' %}" class='small-3 columns button'>About</a>
-        </nav>
+       </nav>
+
     </header>
-<section class='wrapper'>
-<div class='testpie'>
-</div>
-</section>
+
+	<section class='wrapper row'>
+
+		<h4 class="nosy_query row">So... <i>Nosy Person</i>... they're feeling... <i>all these feels...</i></h4>
+
+	<section id='hold_tweet_view' class='row'>
+		
+		<article id='tweet_view'></article>
+	
+	</section>
+
+	<div class='testpie row'>
+	
+	</div>
+
+	</section>
 
 
 <script>
-var something = {{tweets|safe}};
+
+d3.select('#tweet_view').append("text")
+	.text("")
+	.attr("class", "viewed_tweet");
+
+var targetthing = {{target|safe}};
+
+var something = {{those_tweets|safe}};
+
+var otherthing = {{these_tweets|safe}};
 
 var tweet_text = ["gerber baby", "sing me a song"];
 
@@ -66,7 +74,10 @@ var color = d3.scale.ordinal()
 	// .range(red, blue, brown, black, yellow, grey, purple,green)
 
 var m = 5,
-    r = 45;
+    r = 45,
+    height = 300,
+    width = 300,
+    centered;
 
 
 var scoring = function(d) {
@@ -82,6 +93,10 @@ var pie = d3.layout.pie()
 var arc = d3.svg.arc()
         .innerRadius(r / 2)
         .outerRadius(r);
+
+var arcOver = d3.svg.arc()
+		.innerRadius(r * 2 )
+		.outerRadius(r * 4);
 
 var pie = d3.layout.pie()
     .value(function(d) { return +d.score; })
@@ -119,8 +134,7 @@ svg.append("text")
   .attr("class", "tweet_text")
   // .text(function(d) {return this._current.key;})
   .attr("id", function(d) { return "tweet_text_" + this._current.key; });
-  // .attr("id", function(d, i) { return "tweet_text_" + i; })
-  // .text(function(d, i) { return tweet_text[i]; });
+
 
 var g = svg.selectAll('g')
 	.data(function(d) { return pie(d.values); })
@@ -152,53 +166,30 @@ var g = svg.selectAll('g')
         });
       });
 
-      g.on("mouseout", function(obj){
-        svg.select("text.text-tooltip").text("");
-      });
+      svg.on("click", clicked);
 
 
 
-  
+function clicked(d) {
+	console.log(this);
+	var mypie = d3.select(this);
+	console.log(mypie[0][0].viewportElement.id);
+	var bigpie = ("#"+mypie[0][0].viewportElement.id);
+	console.log(bigpie);
+	var thatpie = bigpie.replace(/[^0-9]/gi, '');
+	console.log(thatpie);
+
+	// d3.select(".nosy_query")
+	// .html("")
+	// .html(function(d) { return "'" + target.name "'" + " is feeling all these feels...";});
+
+	d3.select('#tweet_view')
+	.text("")
+	.html(function(d) { return targetthing.name + ' (re)Tweeted: "' + otherthing[thatpie].text + '"';}) 
+
+};
 
 
-
-
-
-//******************************
-
-// var emotions = {{emotions|safe }};
-
-// var test_data = {{color_scores|safe}};
-
-
-// var data = [[2,4,2], [2,4,2, 2]];
-// // var data = {{scores}};
-
-
-
-// var color = d3.scale.ordinal()
-// 	.range(["#e34141", "#4545ec", "#652e2e", "#272323", "#eeee4b", "#808080", "#944fba", "#22c322"]);
-// 	// .range(red, blue, brown, black, yellow, grey, purple,green)
-
-// var m = 10,
-//     r = 100;
-
-// var svg = d3.select(".testpie").selectAll("svg")
-//     .data(data)
-//   .enter().append("svg")
-//     .attr("width", (r + m) * 2)
-//     .attr("height", (r + m) * 2)
-//   .append("g")
-//     .attr("transform", "translate(" + (r + m) + "," + (r + m) + ")");
-
-
-// svg.selectAll("path")
-//     .data(d3.layout.pie())
-//   .enter().append("path")
-//     .attr("d", d3.svg.arc()
-//         .innerRadius(r / 2)
-//         .outerRadius(r))
-//     .style("fill", function(d, i) { return color(i); });
 
 
 </script>

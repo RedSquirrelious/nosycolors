@@ -223,7 +223,7 @@ def pie_data(request):
 			target['screen_name'] = user.screen_name
 
 			those_tweets = []
-
+			these_tweets = []
 			all_emotion_list = []
 			all_score_list = []
 			all_color_scores = []
@@ -233,6 +233,7 @@ def pie_data(request):
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
+				these_tweets.append(tweet)
 
 				emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, test_tweet.text)
 
@@ -262,6 +263,7 @@ def pie_data(request):
 						one_emotion_hash['emotion'] = emotion[0]
 						one_emotion_hash['score'] = emotion[1]
 						one_emotion_hash['tweet_id'] = test_tweet.id
+						one_emotion_hash['tweet_text'] = test_tweet.text
 						those_tweets.append(one_emotion_hash)
 					# color_score['emotions'].append(emotion[0])
 					# color_score['scores'].append(emotion[1])
@@ -279,9 +281,9 @@ def pie_data(request):
 				
 				# those_tweets.append(tweet)
 				# print(those_tweets)
-
+	# context = {'emotions': json.dumps(all_emotion_list), 'scores': all_score_list, 'target_handle': target_handle, 'target': target, 'those_tweets': json.dumps(those_tweets), 'these_tweets': json.dumps(these_tweets), 'color_scores': json.dumps(all_color_scores)}
 	# # print(all_score_list)
-	context = {'emotions': json.dumps(all_emotion_list), 'scores': all_score_list, 'target_handle': target_handle, 'target': target, 'tweets': json.dumps(those_tweets), 'color_scores': json.dumps(all_color_scores)}
+	context = {'target_handle': target_handle, 'target': target, 'those_tweets': json.dumps(those_tweets), 'these_tweets': json.dumps(these_tweets)}
 				# context = {'word': "smile"}
 	return render(request, 'pie_data.html', context)
 
@@ -293,10 +295,13 @@ def test_pie(request):
 	# [{'anger': 2}, {'disgust': 4}, {'fear': 2}]}
 	# context = {'data': [{'scores': [2,4,2], 'emotions':['anticipation', 'joy', 'trust']}, {'emotions': ['surprise', 'anger', 'fear', 'disgust'], 'scores': [2, 4, 3, 1]}]}
 
+	these_tweets = ['there once was a man from nantucket',  'sally sells sea shells by the seashore']
 
-	tweets = [{'tweet_id': 1234, 'emotion': 'anticipation', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'joy', 'score': 7, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'sadness', 'score': 1, 'tweet_text': 'gerber baby'}, {'tweet_id': 456, 'emotion': 'anger', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 456, 'emotion': 'disgust', 'score': 4, 'tweet_text': 'no way'}, {'tweet_id': 456, 'emotion': 'fear', 'score': 2, 'tweet_text': 'no way'}]
 
-	context = {'tweets': json.dumps(tweets)}
+
+	those_tweets = [{'tweet_id': 1234, 'emotion': 'anticipation', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'joy', 'score': 7, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'sadness', 'score': 1, 'tweet_text': 'gerber baby'}, {'tweet_id': 456, 'emotion': 'anger', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 456, 'emotion': 'disgust', 'score': 4, 'tweet_text': 'no way'}, {'tweet_id': 456, 'emotion': 'fear', 'score': 2, 'tweet_text': 'no way'}]
+
+	context = {'those_tweets': json.dumps(those_tweets), 'these_tweets': these_tweets}
 
 	return render(request, 'test_pie.html', context)
 

@@ -4,30 +4,69 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Welcome Home</title>
-</head>
+    <title>Nosy Colors</title>
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}" type="text/css">
+		<link rel="stylesheet" href="{% static 'css/foundation.css' %}">
+		<link rel="stylesheet" href="{% static 'css/app.css' %}">
+		<link rel="stylesheet" href="{% static 'css/main.css' %}">
+		<script src="//d3js.org/d3.v3.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
+<!-- 		<script type="text/javascript" src='/../static/js/d3.min.js' ></script>
+		<script type="text/javascript" src='/../static/js/jquery-3.1.1.slim.js'></script> -->
+ <!-- 		<script src="{% static 'js/d3.min.js' %}" type="text/javascript"></script>
+<!
+ <script type="text/javascript" src="{% static 'js/d3.js' %}""></script>.
 
+		<script src="{% static 'js/jquery-3.1.1.slim.js' %}" type="text/javascript"></script>
+		 -->
+</head>
 <body>
-    {% block pagecontent %}
-    <p>{{tweets}}</p>
+
+<!--     {% if tweets %}
+    	<h1>{{target.screen_name}} aka {{target.name}}</h1>
+    	<h1>All About Being Nosy</h1>
+      {% for tweet in tweets %}
+        <h5>Tweet Text:</h5>
+        <p>{{tweet.text}}</p>
+        <h5>Tweet Emotions:</h5>
+        <p>{{tweet.emotions}}</p>
+        <p>{{tweet.scores}}</p>
+
+       {% endfor %}   	
+    {%else%}
+    	 <p>{{target_handle}} hasn't uploaded any tweets yet.</p>
+    {% endif %}  -->
+<!-- <div class="top-bar"> -->
+
+
+    <!-- </div> -->
+    <header class="row">
+        <a href="{% url 'index' %}" class='page_title'><h1 class='small-9 columns'>Feeling Nosy?</h1></a>
+      <nav class='small-3 columns'>
+        <a href="{% url 'index' %}" class='small-3 columns button'>Get Nosy</a>
+        <a href="{% url 'test_pie' %}" class='small-3 columns button'>Test</a>
+        <a href="{% url 'about' %}" class='small-3 columns button'>About</a>
+        </nav>
+    </header>
+
+<section class='wrapper'>
+
+<!--     {% block pagecontent %}
+    {{those_tweets}}
+    ******************************************
+    {{these_tweets}} -->
 
 <div class='testpie'>
 </div>
-	<script src="//d3js.org/d3.v3.min.js"></script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
-<script type='text/javascript' >
-
-var $el = d3.select(".testpie")
-
-var something = {{tweets|safe}};
-
-var tweet_text = ["gerber baby", "sing me a song"];
+</section>
 
 
+<script>
+var something = {{those_tweets|safe}};
 
-var label = d3.scale.ordinal()
-.range(["anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"]);
+
+// var label = d3.scale.ordinal()
+// .range(["anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"]);
 
 
 var color = d3.scale.ordinal()
@@ -35,14 +74,17 @@ var color = d3.scale.ordinal()
 	.range(["#e34141", "#4545ec", "#652e2e", "#272323", "#eeee4b", "#808080", "#944fba", "#22c322"]);
 	// .range(red, blue, brown, black, yellow, grey, purple,green)
 
-var m = 10,
-    r = 100;
+var m = 5,
+    r = 45,
+    height = 300,
+    width = 300,
+    centered;
 
 
-var scoring = function(d) {
-	console.log(d);
-	return d.sentiment.score;
-};
+// var scoring = function(d) {
+// 	console.log(d);
+// 	return d.sentiment.score;
+// };
 
 var pie = d3.layout.pie()
 	.value( function(d) { return d.scores; })
@@ -52,6 +94,10 @@ var pie = d3.layout.pie()
 var arc = d3.svg.arc()
         .innerRadius(r / 2)
         .outerRadius(r);
+
+var arcOver = d3.svg.arc()
+		.innerRadius(r * 2 )
+		.outerRadius(r * 4);
 
 var pie = d3.layout.pie()
     .value(function(d) { return +d.score; })
@@ -68,9 +114,14 @@ var tweet_emoting = d3.nest()
 		.key(function(d) { return d.tweet_id; })
 		.entries(something);
     
-var svg = d3.select(".testpie").selectAll("svg")
+var svg = d3.select(".testpie").selectAll("div")
 			.data(tweet_scoring)
-			.enter().append("svg")
+			.enter()
+			.append("div")
+				.attr("class", "emotion_donut")
+			// .attr("class", "svg-container")
+   		// .classed("svg-container", true)
+			.append("svg")
 		    .attr("width", (r + m) * 2)
 		    .attr("height", (r + m) * 2)
 		    .attr("class", "tweet")
@@ -85,8 +136,7 @@ svg.append("text")
   .attr("class", "tweet_text")
   // .text(function(d) {return this._current.key;})
   .attr("id", function(d) { return "tweet_text_" + this._current.key; });
-  // .attr("id", function(d, i) { return "tweet_text_" + i; })
-  // .text(function(d, i) { return tweet_text[i]; });
+
 
 var g = svg.selectAll('g')
 	.data(function(d) { return pie(d.values); })
@@ -100,37 +150,68 @@ var g = svg.selectAll('g')
 	 		.attr("id", function(d, i) {return "emotionArc_" + i; })
       .style("fill", function(d) { return color(d.data.emotion); });
 
-      g.append("text")
-          .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-          .attr("dy", ".35em")
-          .style("text-anchor", "middle");
+      // g.append("text")
+      //     .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+      //     .attr("dy", ".35em")
+      //     .style("text-anchor", "middle");
 
-      g.select("text").text(function(d) { return d.data.emotion; });      
+      // g.select("text").text(function(d) { return d.data.emotion; });      
 
       g.on("mouseover", function(obj){
-        console.log(obj.data.emotion)
+        // console.log(obj.data)
         svg.select("#tweet_text_"+ obj.data.tweet_id)
         .attr("fill", function(d) { return color(obj.data.emotion); })
         .attr("font-weight", "bold")
-        .style("font-size", r/5.5+"px")
+        .style("font-size", r/6+"px")
         .text(function(d){
           return obj.data.emotion;
         });
       });
 
-      g.on("mouseout", function(obj){
-        svg.select("text.text-tooltip").text("");
-      });
+      svg.on("click", clicked);
 
 
 
-  
+function clicked(d) {
 
+	var mypie = d3.select(this);
+	// console.log(mypie[0][0].viewportElement.id);
+	var testthing = mypie[0][0].viewportElement.id;
+	console.log(testthing);
+	var bigpie = svg.select("#"+ testthing);
+  console.log(bigpie);	
+	var goodpie = svg.select("#tweet_0");
+	console.log(goodpie);
+	// console.log('working?');
+  var x, y, k;
+
+
+ //  if (d && centered !== d) {
+ //    var centroid = arc.centroid(d);
+ //    x = centroid[0];
+ //    y = centroid[1];
+ //    k = 4;
+ //    centered = d;
+ //  } else {
+ //    x = width / 2;
+ //    y = height / 2;
+ //    k = 1;
+ //    centered = null;
+ //  }
+
+  bigpie.selectAll("path")
+      .classed("active", centered && function(d) { return d === centered; });
+
+  bigpie.transition()
+      .duration(750)
+    	.attr("transform", "scale(" + (3 * (r + m)) + "," + (3 * (r + m)) + ")")
+      .style("stroke-width", 1.5 / k + "px");
+
+};
 
 
 </script>
-    <a href="{% url 'index' %}"> Get Nosy </a> 
-    <a href="{% url 'test_pie' %}">Test Pies</a>
+
     {% endblock %}
 </body>
 
