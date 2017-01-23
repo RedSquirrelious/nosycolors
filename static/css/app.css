@@ -1,0 +1,47 @@
+/*
+.top-bar {
+	background-color: "#7c2570";
+}
+
+.top-bar-title h1 {
+	margin-left: 2%;
+	width: 100%;
+} 
+
+.wrapper {
+	display: flex;
+	justify-content: center;
+	margin-left: 2em;
+}
+
+img.set-header  {
+	width: 100%;
+	vertical-align: middle;
+	margin-left: 0;
+}
+
+.set-header nav ul {
+	list-style: none;
+	font-size: 1.5rem;
+}
+
+h1.set-header {
+	font-family: verdana;
+	margin-top: .2em;
+	margin-bottom: .2em
+}
+.container {
+    margin: 10 10 10 10;
+    border: 3px solid black;
+}
+
+
+.emotion_donut {
+	display: inline-block;
+}
+
+.tweet {
+	float: center;
+}
+
+*/

@@ -1,3 +1,5 @@
+{% extends 'twittering/base.html' %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -5,7 +7,8 @@
 </head>
 <body>
   {% block pagecontent %}
-<form action="pie_data/" method="post">
+<section class="form_wrapper">
+<form action="pie_data/" method="post" class="small-6 columns" id="nosy_form">
 
     {% csrf_token %}
 
@@ -22,10 +25,7 @@
 
     <input type="submit" value="OK">
 </form>
-
-  <a href="{% url 'about' %}">About</a> 
-  <a href="{% url 'pie_data' %}">Pies</a>
-  <a href="{% url 'test_pie' %}">Test Pies</a>
+</section>
     {% endblock %}
 </body>
 
