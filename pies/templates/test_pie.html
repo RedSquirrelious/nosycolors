@@ -9,7 +9,7 @@
 
 <body>
     {% block pagecontent %}
-    <p>somethingred</p>
+    <p>{{tweets}}</p>
 
 <div class='testpie'>
 </div>
@@ -25,7 +25,7 @@ var tweet_text = ["gerber baby", "sing me a song"];
 
 
 // var data = {{data|safe}};
-var data = [[2,4,2, 0, 0, 0, 5, 0], [2,4,2,2,2,4,2,2]];
+// var data = [[2,4,2, 0, 0, 0, 5, 0], [2,4,2,2,2,4,2,2]];
 
 var label = d3.scale.ordinal()
 .range(["anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"]);
@@ -46,7 +46,9 @@ var scoring = function(d) {
 };
 
 var pie = d3.layout.pie()
-	.value( function(d) { return d.scores; });
+	.value( function(d) { return d.scores; })
+	.padAngle(.01)
+	.sort(null);
 
 var arc = d3.svg.arc()
         .innerRadius(r / 2)
@@ -61,6 +63,14 @@ var pie = d3.layout.pie()
 var tweet_scoring = d3.nest()
 		.key(function(d) { return d.tweet_id; })
 		.entries(something);
+
+var tweet_emoting = d3.nest()
+		.key(function(d) { return d.tweet_id; })
+		.entries(something);
+
+var div = d3.select(".testpie").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
 
 var svg = d3.select(".testpie").selectAll("svg")
 		.data(tweet_scoring)
@@ -77,7 +87,7 @@ svg.append("text")
   .attr("text-anchor", "middle")
   .attr("class", "tweet_text")
   .attr("id", function(d, i) { return "tweet_text_" + i; })
-  .text(function(d) { return d.tweet_id; });
+  .text(function(d, i) { return tweet_text[i]; });
 
 var g = svg.selectAll('g')
 	.data(function(d) { return pie(d.values); })
@@ -85,10 +95,24 @@ var g = svg.selectAll('g')
 
   g.append("path")
       .attr("d", arc)
-      .style("fill", function(d, i) { return color(d.data.emotion); })
-    // .append("title")
-    //   .text(function(d) { return d.tweetdata.emotion + ": " + d.tweetdata.score; });
-  
+      .attr("class", "emotionArc")
+	 		.attr("id", function(d, i) {return "emotionArc_" + i; })
+      .style("fill", function(d) { return color(d.data.emotion); })
+       .on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(d.data.emotion)
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        });
+
+
   g.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("text")
       .attr("dy", ".35em")
       .attr("text-anchor", "middle")
@@ -100,15 +124,6 @@ var g = svg.selectAll('g')
     var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
     return a > 90 ? a - 180 : a;
   }
-
-// svg.selectAll("path")
-//  	.data(pie(scoring(data)))
-//   .enter().append("path")
-//   	.attr("d", arc)
-//   	.attr("class", "emotionArc")
-// 	 	.attr("id", function(d, i) {return "emotionArc_" + i; })
-// 	 	.attr("text", function(d, i) { return label(i);})
-//   	.style("fill", function(d, i) { return color(i); });
 
 
 
