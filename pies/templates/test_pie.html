@@ -67,17 +67,6 @@ var tweet_scoring = d3.nest()
 var tweet_emoting = d3.nest()
 		.key(function(d) { return d.tweet_id; })
 		.entries(something);
-
-// var div = d3.select(".testpie").append("div")	
-//     .attr("class", "tooltip")				
-//     .style("opacity", 0);
-
-// var div = $el.selectAll("div")
-// 		.data(tweet_scoring)
-// 		.enter().append("div")
-// 			.style("display", "inline-block")
-//       .style("width", (r + m) * 2 + "px")
-//       .style("height", (r + m) * 2 + "px");
     
 var svg = d3.select(".testpie").selectAll("svg")
 			.data(tweet_scoring)
@@ -92,50 +81,16 @@ var svg = d3.select(".testpie").selectAll("svg")
 svg.append("text")
 	.each(function(d) { this._current = d;})
   .attr("dy", ".35em")
-  // .attr("id", function(d, i) {return "tweet_text_" + i})
   .attr("text-anchor", "middle")
   .attr("class", "tweet_text")
   // .text(function(d) {return this._current.key;})
   .attr("id", function(d) { return "tweet_text_" + this._current.key; });
   // .attr("id", function(d, i) { return "tweet_text_" + i; })
   // .text(function(d, i) { return tweet_text[i]; });
-// svg.on("mouseover", function(obj){
-//         console.log(obj.key)
-//         // svg.select("text.tweet_text")
-//         // // .append("text")
-//         // .attr("fill", function(d) { return color(obj.data.emotion); })
-//         // .text(function(d){
-//         //   return obj.data.emotion;
-//         // });
-//       });
 
-      // g.on("mouseout", function(obj){
-      //   svg.select("text.text-tooltip").text("");
-      // });
 var g = svg.selectAll('g')
 	.data(function(d) { return pie(d.values); })
 	.enter().append('g');
-
-	  // g.append("path")
-   //    .attr("d", arc)
-   //    .attr("class", "emotionArc")
-	 	// 	.attr("id", function(d, i) {return "emotionArc_" + i; })
-   //    .style("fill", function(d) { return color(d.data.emotion); });
-   //     .on("mouseover", function(d) {		
-   //          div.transition()		
-   //              .duration(200)		
-   //              .style("opacity", .9);		
-   //          div	.html(d.data.emotion)
-   //              // .style("left", d + "px")		
-   //              // .style("top", d + "px");	
-   //              .style("left", d3.select(this).attr("dx") + "px")
-   //              .style("top", d3.select(this).attr("dx") + "px")                
-   //          })					
-   //      .on("mouseout", function(d) {		
-   //          div.transition()		
-   //              .duration(500)		
-   //              .style("opacity", 0);	
-   //      });
 
   g.append("path")
   		.each(function(d) { this._current = d; })
@@ -151,20 +106,13 @@ var g = svg.selectAll('g')
           .style("text-anchor", "middle");
 
       g.select("text").text(function(d) { return d.data.emotion; });      
-    	
-    	// svg.append("text")
-    	// 		// .datum()
-     //      .attr("x", 0 )
-     //      .attr("y", 0 + r/10 )
-     //      .attr("class", "tweet_text")        
-     //      .style("text-anchor", "middle")
-     //      .attr("font-weight", "bold")
-     //      .style("font-size", r/2.5+"px");
 
       g.on("mouseover", function(obj){
         console.log(obj.data.emotion)
         svg.select("#tweet_text_"+ obj.data.tweet_id)
         .attr("fill", function(d) { return color(obj.data.emotion); })
+        .attr("font-weight", "bold")
+        .style("font-size", r/5.5+"px")
         .text(function(d){
           return obj.data.emotion;
         });
