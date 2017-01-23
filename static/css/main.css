@@ -1,21 +1,40 @@
-
-.top-bar {
-	background-color: "#4545ec";
+header.row {
+	background-color: #944fba;
+	border-bottom: solid black;
 }
 
-body.wrapper {
-	margin-left: 2em;
+a.page_title {
+	color: white;
+}
+.wrapper {
+	padding: 5%;
+	display: flex;
+	justify-content: center;
+	margin-left: 1em;
 }
 
-img.set-header  {
-	width: 100%;
-	vertical-align: middle;
-	margin-left: 0;
+.form-wrapper {
+	padding: 5%;
+	display: flex;
+	justify-content: center;
 }
 
-.set-header nav ul {
+/*.set-header nav ul {
 	list-style: none;
 	font-size: 1.5rem;
+}*/
+nav {
+	display: flex;
+	justify-content: center;
+}
+
+nav a {
+	/*float: right;*/
+}
+
+nav .button {
+	background-color: #944fba;
+	/*float: center;*/
 }
 
 h1.set-header {
@@ -23,20 +42,21 @@ h1.set-header {
 	margin-top: .2em;
 	margin-bottom: .2em
 }
+
+a {
+	color: black;
+}
 .container {
     margin: 10 10 10 10;
     border: 3px solid black;
 }
 
-div.tooltip {	
-    position: absolute;			
-    text-align: center;			
-    width: 60px;					
-    height: 28px;					
-    padding: 2px;				
-    font: 12px sans-serif;		
-    background: lightsteelblue;	
-    border: 0px;		
-    border-radius: 8px;			
-    pointer-events: none;			
+
+.emotion_donut {
+	display: inline-block;
 }
+
+.tweet {
+	float: center;
+}
+
