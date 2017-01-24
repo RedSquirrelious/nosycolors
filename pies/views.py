@@ -111,10 +111,10 @@ def query_emolex(host, database, user, password, tweet):
 
 
 def find_strongest_emotions_in_tweet(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, tweet):
-	from time import time; before=time.now()
+	import time; before=time.time()
 
 	emotion_list = query_emolex(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, tweet)
-	from time import time; logger.error(time.now() - before)
+	import time; logger.error(time.time() - before)
 
 	final_scoring = dict()
 
