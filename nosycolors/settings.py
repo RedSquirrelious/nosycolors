@@ -29,7 +29,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # *************************************
 # NOT SURE IF THIS BELONGS HERE??
-print(os.environ)
+# print(os.environ)
 TWITTER_AUTH = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
 TWITTER_AUTH.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_SECRET'])
 
