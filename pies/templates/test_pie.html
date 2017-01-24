@@ -22,51 +22,55 @@
 </head>
 <body>
 
-<!--     {% if tweets %}
-    	<h1>{{target.screen_name}} aka {{target.name}}</h1>
-    	<h1>All About Being Nosy</h1>
-      {% for tweet in tweets %}
-        <h5>Tweet Text:</h5>
-        <p>{{tweet.text}}</p>
-        <h5>Tweet Emotions:</h5>
-        <p>{{tweet.emotions}}</p>
-        <p>{{tweet.scores}}</p>
-
-       {% endfor %}   	
-    {%else%}
-    	 <p>{{target_handle}} hasn't uploaded any tweets yet.</p>
-    {% endif %}  -->
-<!-- <div class="top-bar"> -->
+    {% block pagecontent %}
 
 
-    <!-- </div> -->
+
     <header class="row">
         <a href="{% url 'index' %}" class='page_title'><h1 class='small-9 columns'>Feeling Nosy?</h1></a>
+      
       <nav class='small-3 columns'>
         <a href="{% url 'index' %}" class='small-3 columns button'>Get Nosy</a>
         <a href="{% url 'test_pie' %}" class='small-3 columns button'>Test</a>
         <a href="{% url 'about' %}" class='small-3 columns button'>About</a>
-        </nav>
+       </nav>
+
     </header>
 
-<section class='wrapper'>
+	<section class='wrapper row'>
 
-<!--     {% block pagecontent %}
-    {{those_tweets}}
-    ******************************************
-    {{these_tweets}} -->
+		<h4 class="nosy_query row">So... <i>Nosy Person</i>... they're feeling... <i>all these feels...</i></h4>
 
-<div class='testpie'>
-</div>
-</section>
+	<section id='hold_tweet_view' class='row'>
+		
+		<article id='tweet_view'></article>
+	
+	</section>
+
+	<div class='testpie row'>
+	
+	</div>
+
+	</section>
 
 
-<script>
+<script type='text/javascript'>
+
+d3.select('#tweet_view').append("text")
+	.text("")
+	.attr("class", "viewed_tweet");
+
+
 var something = {{those_tweets|safe}};
 
+var otherthing = {{these_tweets|safe}};
 
-// var label = d3.scale.ordinal()
-// .range(["anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"]);
+var tweet_text = ["gerber baby", "sing me a song"];
+
+
+
+var label = d3.scale.ordinal()
+.range(["anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"]);
 
 
 var color = d3.scale.ordinal()
@@ -81,10 +85,10 @@ var m = 5,
     centered;
 
 
-// var scoring = function(d) {
-// 	console.log(d);
-// 	return d.sentiment.score;
-// };
+var scoring = function(d) {
+	console.log(d);
+	return d.sentiment.score;
+};
 
 var pie = d3.layout.pie()
 	.value( function(d) { return d.scores; })
@@ -116,12 +120,11 @@ var tweet_emoting = d3.nest()
     
 var svg = d3.select(".testpie").selectAll("div")
 			.data(tweet_scoring)
-			.enter()
-			.append("div")
-				.attr("class", "emotion_donut")
+			.enter().append("div")
+			.attr("class", "emotion_donut")
 			// .attr("class", "svg-container")
    		// .classed("svg-container", true)
-			.append("svg")
+				.append("svg")
 		    .attr("width", (r + m) * 2)
 		    .attr("height", (r + m) * 2)
 		    .attr("class", "tweet")
@@ -173,39 +176,21 @@ var g = svg.selectAll('g')
 
 
 function clicked(d) {
-
+	console.log(this);
 	var mypie = d3.select(this);
-	// console.log(mypie[0][0].viewportElement.id);
-	var testthing = mypie[0][0].viewportElement.id;
-	console.log(testthing);
-	var bigpie = svg.select("#"+ testthing);
-  console.log(bigpie);	
-	var goodpie = svg.select("#tweet_0");
-	console.log(goodpie);
-	// console.log('working?');
-  var x, y, k;
+	console.log(mypie[0][0].viewportElement.id);
+	var bigpie = ("#"+mypie[0][0].viewportElement.id);
+	console.log(bigpie);
+	var thatpie = bigpie.replace(/[^0-9]/gi, '');
+	console.log(thatpie);
 
+	// d3.select(".nosy_query")
+	// .html("")
+	// .html(function(d) { return "'" + target.name "'" + " is feeling all these feels...";});
 
- //  if (d && centered !== d) {
- //    var centroid = arc.centroid(d);
- //    x = centroid[0];
- //    y = centroid[1];
- //    k = 4;
- //    centered = d;
- //  } else {
- //    x = width / 2;
- //    y = height / 2;
- //    k = 1;
- //    centered = null;
- //  }
-
-  bigpie.selectAll("path")
-      .classed("active", centered && function(d) { return d === centered; });
-
-  bigpie.transition()
-      .duration(750)
-    	.attr("transform", "scale(" + (3 * (r + m)) + "," + (3 * (r + m)) + ")")
-      .style("stroke-width", 1.5 / k + "px");
+	d3.select('#tweet_view')
+	.text("")
+	.html(function(d) { return targetthing.name + ' (re)Tweeted: "' + otherthing[thatpie].text + '"';}) 
 
 };
 
