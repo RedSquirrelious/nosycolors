@@ -7,6 +7,7 @@ import os
 from operator import itemgetter
 import re
 import string
+import timezone
 
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
@@ -177,7 +178,7 @@ def pie_data(request):
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
-				tweet['date'] = utc_to_local(test_tweet.created_at)
+				# tweet['date'] = utc_to_local(test_tweet.created_at)
 
 				all_tweet_details.append(tweet)
 
