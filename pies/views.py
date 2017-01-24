@@ -1,11 +1,12 @@
 import csv
 from datetime import datetime
+from dateutil import tz
 import json
 import logging
 import os
 from operator import itemgetter
-import string
 import re
+import string
 
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
@@ -57,6 +58,8 @@ def json_serial(obj):
         return serial
     raise TypeError ("Type not serializable")
 
+def utc_to_local(utc_dt):
+    return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
 # NEEDED FOR CLASSIFY
 def process(text, tokenizer=TweetTokenizer(), stopwords=[]):
@@ -174,7 +177,7 @@ def pie_data(request):
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
-				tweet['date'] = json_serial(test_tweet.created_at)
+				tweet['date'] = utc_to_local(test_tweet.created_at)
 
 				all_tweet_details.append(tweet)
 
