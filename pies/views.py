@@ -82,20 +82,24 @@ def query_emolex(host, database, user, password, tweet):
 	for i in range(len(tweet_words)):
 		tweet_words[i] = regex.sub('', tweet_words[i])
 
+	import time; before = time.time()
 
 	query = "SELECT w.word, e.emotion, w.count, wes.score, wes.word_id, wes.emotion_id, w.id, e.id FROM words w JOIN word_emotion_score wes ON wes.word_id = w.id JOIN emotions e ON e.id = wes.emotion_id WHERE w.word IN (%s)"
  
 	in_p=', '.join(list(map(lambda x: '%s', tweet_words)))
 
 	query = query % in_p
-
+	
+	print(query)
+	print(tweet_words)
+	
 	cursor.execute(query, tuple(tweet_words))
 
 	results = cursor.fetchall()
 
 	cursor.close()
 	cnx.close()
-
+	logger.error(time.time() - before)
 	emotion_list = dict()
 
 	for word in results:
@@ -111,11 +115,8 @@ def query_emolex(host, database, user, password, tweet):
 
 
 def find_strongest_emotions_in_tweet(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, tweet):
-	import time; before=time.time()
 
 	emotion_list = query_emolex(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, tweet)
-	import time; logger.error(time.time() - before)
-
 	final_scoring = dict()
 
 	for word in emotion_list:
@@ -123,7 +124,7 @@ def find_strongest_emotions_in_tweet(HOST, DATABASE_NAME, USER_NAME, DATABASE_KE
 		highest_score = max(emotion_list[word], key=itemgetter(1))[1]
 
 		final_scoring[word] = (highest_scoring_emotion, highest_score)
-	print(final_scoring)
+
 	return final_scoring
 
 
