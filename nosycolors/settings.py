@@ -100,7 +100,7 @@ DATABASES = {
         'NAME': os.environ['DATABASE_NAME'],
         'USER': os.environ['USER_NAME'],
         'PASSWORD': os.environ['DATABASE_KEY'],
-        'HOST': 'localhost',
+        'HOST': os.environ['HOST'],
         'PORT': '3306',
     }
 }
