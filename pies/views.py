@@ -139,6 +139,7 @@ def show_top_emotion(emotion_dictionary):
 
 
 def pie_data(request):
+	print("In pie_data method, request is " + request)
 	if request.method == 'POST':
 		form = HandleForm(request.POST)
 		target = dict()
