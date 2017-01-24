@@ -183,10 +183,10 @@ def pie_data(request):
 						one_emotion_hash['tweet_id'] = test_tweet.id
 						one_emotion_hash['tweet_text'] = test_tweet.text
 						those_tweets.append(one_emotion_hash)
+  
+		context = {'target': target, 'those_tweets': json.dumps(those_tweets), 'these_tweets': json.dumps(these_tweets)}
 
-	context = {'target': target, 'those_tweets': json.dumps(those_tweets), 'these_tweets': json.dumps(these_tweets)}
-
-	return render(request, 'pie_data.html', context)
+		return render(request, 'pie_data.html', context)
 
 def test_pie(request):
 
