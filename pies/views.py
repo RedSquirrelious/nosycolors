@@ -40,20 +40,6 @@ punct = list(string.punctuation)
 stopword_list = stopwords.words('english') + punct + ['rt', 'via', '...', '…']
 
 
-# test_tweet1 = "@ZeroUtopia @democracynow Unfortunately his listening skills are not good enough for that level of meatiness. I'll probably do @BBC first"
-test_tweet2 = "RT @SUPGVNetwork: A toddler has now shot a person every week in America for two years straight. Yes, you read that correctly. https://t.co…"
-# test_tweet3 = "@ZeroUtopia I had to just grit my teeth and repeat in my head ... still better than FOX... still better than FOX.... UGH"
-# test_tweet4 = "RT @quasimado: A quarter of 2016's mass shootings occurred when a woman was attempting to leave a relationship https://t.co/oOxZR7Ztth"
-# test_tweets = [test_tweet1, test_tweet2, test_tweet3, test_tweet4]
-
-# try_json = [{'emotions': {'anger': 0, 'anticipation': 0, 'disgust': 0, 'fear': 0, 'joy': 2, 'negative': 0, 'positive': 0, 'sadness': 1, 'surprise': 0, 'trust': 0}}, {'emotions': {'anger': 1, 'anticipation': 1, 'disgust': 2, 'fear': 0, 'joy': 1, 'negative': 0, 'positive': 0, 'sadness': 0, 'surprise': 0, 'trust': 1}}, {'emotions': {'anger': 0, 'anticipation': 0, 'disgust': 0, 'fear': 0, 'joy': 0, 'negative': 0, 'positive': 0, 'sadness': 0, 'surprise': 0, 'trust': 1}}]
-
-
-# def pie_data(request):
-# 	context = try_json[0]
-
-# 	return render(request, 'pie_data.html', context)
-
 class IndexView(TemplateView):
     template_name = "index.html"
 
@@ -151,61 +137,9 @@ def show_top_emotion(emotion_dictionary):
 			emotion_hash['trust'] += 1
 	return emotion_hash.items()
 
-#THIS ONE IS IN PROGRESS
-# def get_pie_data(request):
 
-# 	if request.method == 'POST':
-# 	    # create a form instance and populate it with data from the request:
-# 		form = HandleForm(request.POST)
-
-# 		if form.is_valid():
-
-# 			target_handle = form.cleaned_data['target_handle']
-# 			number_of_tweets = form.cleaned_data['number_of_tweets']
-			
-# 			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
-
-				
-# 			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
-# 			target = dict()
-# 			target['name'] = user.name
-# 			target['screen_name'] = user.screen_name
-
-# 			tweets = []
-
-# 			for raw_tweet in rawtweepy:
-# 				tweet = {}
-
-# 				tweet_words = process(raw_tweet.text)
-				
-# 				strongest_emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, tweet_words)
-
-# 				if strongest_emotions:
-# 					# strongest_emotions = ", ".join(strongest_emotions)
-# 					tweet['emotion'] = strongest_emotions
-# 				else:
-# 					tweet['emotion'] = 'Unable to process this tweet'
-
-# 				tweet['text'] = (raw_tweet.text)
-
-# 				tweets.append(tweet)
-
-
-
-# 			context = {'target_handle': target_handle, 'tweets': tweets, 'target': target }
-
-# # if a GET (or any other method) we'll create a blank form
-# 	else:
-# 		form = HandleForm()
-
-
-# 	return context
-
-
-#THIS ONE WORKS
 def pie_data(request):
 	if request.method == 'POST':
-	    # create a form instance and populate it with data from the request:
 		form = HandleForm(request.POST)
 
 		if form.is_valid():
@@ -237,27 +171,11 @@ def pie_data(request):
 
 				emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, test_tweet.text)
 
-				# count = show_top_emotion(emotions)
-				# color_score = {}
-				# for emotion in count:
-				# 	if emotion[1] > 0:
-				# 		color_score[emotion[0]] = emotion[1]
-				# 		one_emotion_list.append(emotion[0])
-				# 		one_score_list.append(emotion[1])
-
-				# all_emotion_list.append(one_emotion_list)
-				# all_score_list.append(one_score_list)
-				# all_color_scores.append(color_score)
 				count = show_top_emotion(emotions)
-				# color_score = {}
-				# color_score['emotions'] = []
-				# color_score['scores'] = []
-				# tweet_color_scores = []
+
 				for emotion in count:
 					one_emotion_hash = {}
-					# color_score[emotion[0]] = emotion[1]
-					# one_emotion_list.append(emotion[0])
-					# one_score_list.append(emotion[1])
+
 					if emotion[1] > 0:
 						one_emotion_list.append(emotion[0])
 						one_emotion_hash['emotion'] = emotion[0]
@@ -265,39 +183,14 @@ def pie_data(request):
 						one_emotion_hash['tweet_id'] = test_tweet.id
 						one_emotion_hash['tweet_text'] = test_tweet.text
 						those_tweets.append(one_emotion_hash)
-					# color_score['emotions'].append(emotion[0])
-					# color_score['scores'].append(emotion[1])
-				# one_emotion_list.append(emotion[0])
-				# one_score_list.append(emotion[1])
 
-				# tweet_color_scores.append(color_score)
-
-				# all_emotion_list.append(one_emotion_list)
-				# all_score_list.append(one_score_list)
-				# all_color_scores.append(tweet_color_scores)
-				
-				# tweet['emotions'] = one_emotion_list
-				# tweet['scores'] = one_score_list
-				
-				# those_tweets.append(tweet)
-				# print(those_tweets)
-	# context = {'emotions': json.dumps(all_emotion_list), 'scores': all_score_list, 'target_handle': target_handle, 'target': target, 'those_tweets': json.dumps(those_tweets), 'these_tweets': json.dumps(these_tweets), 'color_scores': json.dumps(all_color_scores)}
-	# # print(all_score_list)
 	context = {'target_handle': target_handle, 'target': target, 'those_tweets': json.dumps(those_tweets), 'these_tweets': json.dumps(these_tweets)}
-				# context = {'word': "smile"}
+
 	return render(request, 'pie_data.html', context)
 
 def test_pie(request):
-	# context = {'data': [[2,4,2, 5], [2,4,2, 2]], 'emotions':[['anticipation', 'joy', 'trust', 'sadness'], ['surprise', 'anger', 'fear', 'disgust']]}
-	# context = {'data': [[{'emotion': 'anticipation', 'score': 2}, {'emotion': 'joy', 'score': 4}, {'emotion': 'suprise', 'score': 2}], 
-	# [{'emotion': 'anger', 'score': 2}, {'emotion': 'disgust', 'score': 4}, {'emotion': 'fear', 'score': 2}]]}
-	# 	context = {'tweets': [{'anticipation': 2}, {'joy': 4}, {'suprise': 2}], 
-	# [{'anger': 2}, {'disgust': 4}, {'fear': 2}]}
-	# context = {'data': [{'scores': [2,4,2], 'emotions':['anticipation', 'joy', 'trust']}, {'emotions': ['surprise', 'anger', 'fear', 'disgust'], 'scores': [2, 4, 3, 1]}]}
 
 	these_tweets = ['there once was a man from nantucket',  'sally sells sea shells by the seashore']
-
-
 
 	those_tweets = [{'tweet_id': 1234, 'emotion': 'anticipation', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'joy', 'score': 7, 'tweet_text': 'gerber baby'}, {'tweet_id': 1234,'emotion': 'sadness', 'score': 1, 'tweet_text': 'gerber baby'}, {'tweet_id': 456, 'emotion': 'anger', 'score': 2, 'tweet_text': 'gerber baby'}, {'tweet_id': 456, 'emotion': 'disgust', 'score': 4, 'tweet_text': 'no way'}, {'tweet_id': 456, 'emotion': 'fear', 'score': 2, 'tweet_text': 'no way'}]
 
