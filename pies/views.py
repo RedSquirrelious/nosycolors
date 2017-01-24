@@ -142,6 +142,10 @@ def show_top_emotion(emotion_dictionary):
 
 def pie_data(request):
 	logger.error('made it to pie data')
+	logger.error(os.environ['HOST'])
+	logger.error(os.environ['DATABASE_NAME'])
+	logger.error(os.environ['USER_NAME'])
+	logger.error(os.environ['DATABASE_KEY'])
 	if request.method == 'POST':
 		form = HandleForm(request.POST)
 		target = dict()
