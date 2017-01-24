@@ -9,6 +9,5 @@ python-dateutil==2.6.0
 pytz==2016.10
 requests==2.12.5
 requests-oauthlib==0.7.0
-scipy==0.18.1
 six==1.10.0
 tweepy==3.5.0
