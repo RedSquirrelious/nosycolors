@@ -44,7 +44,7 @@ AUTHORIZED_USER = tweepy.API(TWITTER_AUTH, wait_on_rate_limit=True, wait_on_rate
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['color-env.4yydtwdmva.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['localhost', 'color-env.4yydtwdmva.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition
