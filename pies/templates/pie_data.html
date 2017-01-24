@@ -56,11 +56,9 @@ d3.select('#tweet_view').append("text")
 
 var targetthing = {{target|safe}};
 
-var something = {{those_tweets|safe}};
+var something = {{tweet_emotions|safe}};
 
-var otherthing = {{these_tweets|safe}};
-
-var tweet_text = ["gerber baby", "sing me a song"];
+var otherthing = {{tweet_details|safe}};
 
 
 
@@ -185,7 +183,7 @@ function clicked(d) {
 
 	d3.select('#tweet_view')
 	.text("")
-	.html(function(d) { return targetthing.name + ' (re)Tweeted: "' + otherthing[thatpie].text + '"';}) 
+	.html(function(d) { return targetthing.name + ' (re)Tweeted: "' + otherthing[thatpie].text + '"' + " on " + otherthing[thatpie].date;}) 
 
 };
 
