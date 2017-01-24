@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 import json
 import logging
 import os
@@ -46,6 +47,15 @@ class IndexView(TemplateView):
 class AboutView(TemplateView):
     template_name = "about.html"
 
+
+
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
 
 
 # NEEDED FOR CLASSIFY
@@ -164,7 +174,7 @@ def pie_data(request):
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
-				tweet['date'] = test_tweet.created_at
+				tweet['date'] = json_serial(test_tweet.created_at)
 
 				all_tweet_details.append(tweet)
 
