@@ -162,7 +162,7 @@ def pie_data(request):
 			
 			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
 
-			from datetime import datetime; logger.error("at rawtweepy " + str(datetime.now()))			
+			from datetime import datetime; logger.error("at rawtweepy " + str(datetime.now()))
 			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
 
 			target = dict()
@@ -171,23 +171,23 @@ def pie_data(request):
 
 			all_tweet_emotions = []
 			all_tweet_details = []
-			from datetime import datetime; logger.error("before for test_tweet loop " + str(datetime.now()))		
+			from datetime import datetime; logger.error("before for test_tweet loop " + str(datetime.now()))
 			for test_tweet in rawtweepy:
 
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
 				# tweet['date'] = utc_to_local(test_tweet.created_at)
-				from datetime import datetime; logger.error("in test_tweet loop " + str(datetime.now()))		
+				from datetime import datetime; logger.error("in test_tweet loop " + str(datetime.now()))
 				all_tweet_details.append(tweet)
 
 				emotions = find_strongest_emotions_in_tweet(os.environ['HOST'], os.environ['DATABASE_NAME'], os.environ['USER_NAME'], os.environ['DATABASE_KEY'], test_tweet.text)
-				from datetime import datetime; logger.error("database query " + str(datetime.now()))		
+				from datetime import datetime; logger.error("database query " + str(datetime.now()))
 				count = show_top_emotion(emotions)
 
 				for emotion in count:
 					one_emotion_hash = {}
-					from datetime import datetime; logger.error("at emotion hashing " + str(datetime.now()))		
+					from datetime import datetime; logger.error("at emotion hashing " + str(datetime.now()))
 					if emotion[1] > 0:
 						one_emotion_hash['emotion'] = emotion[0]
 						one_emotion_hash['score'] = emotion[1]
@@ -196,7 +196,7 @@ def pie_data(request):
 
 						all_tweet_emotions.append(one_emotion_hash)
 
- 		from datetime import datetime; logger.error("at context " + str(datetime.now()))		 
+		from datetime import datetime; logger.error("at context " + str(datetime.now()))
 		context = {'target': target, 'tweet_emotions': json.dumps(all_tweet_emotions), 'tweet_details': json.dumps(all_tweet_details)}
 
 		return render(request, 'pie_data.html', context)
