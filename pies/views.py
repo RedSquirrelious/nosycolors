@@ -1,13 +1,12 @@
 import csv
-from datetime import datetime
-from dateutil import tz
+
 import json
 import logging
 import os
 from operator import itemgetter
 import re
 import string
-import timezone
+
 
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
