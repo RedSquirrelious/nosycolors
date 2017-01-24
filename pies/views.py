@@ -151,7 +151,7 @@ def pie_data(request):
 			number_of_tweets = form.cleaned_data['number_of_tweets']
 			
 			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
-			logger.error('rawtweepy')
+			logger.error(rawtweepy)
 				
 			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
 
