@@ -1,5 +1,4 @@
 import csv
-
 import json
 import logging
 import os
@@ -8,18 +7,17 @@ import string
 import re
 
 from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
-from django.core.serializers.json import DjangoJSONEncoder
+
 
 from .forms import HandleForm
 
 
 # FOR LANGUAGE ANALYSIS
-
-
 ## needed for MySQL
 
 import mysql.connector
@@ -67,21 +65,20 @@ def query_emolex(host, database, user, password, tweet):
 	tweet_words = process(tweet)
 # make sure tweets don't break the database
 	regex = re.compile('[^a-zA-Z]')
-	# print(tweet_words)
+
 	for i in range(len(tweet_words)):
 		tweet_words[i] = regex.sub('', tweet_words[i])
 
-	# print(tweet_words)
+
 	query = "SELECT w.word, e.emotion, w.count, wes.score, wes.word_id, wes.emotion_id, w.id, e.id FROM words w JOIN word_emotion_score wes ON wes.word_id = w.id JOIN emotions e ON e.id = wes.emotion_id WHERE w.word IN (%s)"
  
 	in_p=', '.join(list(map(lambda x: '%s', tweet_words)))
 
 	query = query % in_p
-	# print(query)
+
 	cursor.execute(query, tuple(tweet_words))
 
 	results = cursor.fetchall()
-	# print(results)
 
 	cursor.close()
 	cnx.close()
@@ -91,9 +88,9 @@ def query_emolex(host, database, user, password, tweet):
 	for word in results:
 		if word['word'] not in emotion_list:
 			emotion_list[word['word']] = []
+		
 		average_score = word['score']/word['count']
 		emotion_w_score = (word['emotion'], average_score)
-		# emotion_list.append(emotion_w_score)	
 		emotion_list[word['word']].append(emotion_w_score)
 
 	return emotion_list
@@ -141,57 +138,52 @@ def show_top_emotion(emotion_dictionary):
 
 
 def pie_data(request):
-	logger.error('made it to pie data')
-	logger.error(os.environ['HOST'])
-	logger.error(os.environ['DATABASE_NAME'])
-	logger.error(os.environ['USER_NAME'])
-	logger.error(os.environ['DATABASE_KEY'])
+
 	if request.method == 'POST':
 		form = HandleForm(request.POST)
-		target = dict()
+
 		if form.is_valid():
-			logger.error('form is valid')
+
 			target_handle = form.cleaned_data['target_handle']
 			number_of_tweets = form.cleaned_data['number_of_tweets']
 			
 			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
-			logger.error(rawtweepy)
+
 				
 			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
 
-			# target = dict()
+			target = dict()
 			target['name'] = user.name
 			target['screen_name'] = user.screen_name
 
-			those_tweets = []
-			these_tweets = []
-			all_emotion_list = []
-			all_score_list = []
-			all_color_scores = []
+			all_tweet_emotions = []
+			all_tweet_details = []
+
 			for test_tweet in rawtweepy:
-				one_score_list = []
-				one_emotion_list = []
+
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
-				these_tweets.append(tweet)
-				logger.error('made it to query part')
+				tweet['date'] = test_tweet.created_at
+
+				all_tweet_details.append(tweet)
+
 				emotions = find_strongest_emotions_in_tweet(os.environ['HOST'], os.environ['DATABASE_NAME'], os.environ['USER_NAME'], os.environ['DATABASE_KEY'], test_tweet.text)
-				logger.error(emotions)
+
 				count = show_top_emotion(emotions)
 
 				for emotion in count:
 					one_emotion_hash = {}
 
 					if emotion[1] > 0:
-						one_emotion_list.append(emotion[0])
 						one_emotion_hash['emotion'] = emotion[0]
 						one_emotion_hash['score'] = emotion[1]
 						one_emotion_hash['tweet_id'] = test_tweet.id
 						one_emotion_hash['tweet_text'] = test_tweet.text
-						those_tweets.append(one_emotion_hash)
+
+						all_tweet_emotions.append(one_emotion_hash)
   
-		context = {'target': target, 'those_tweets': json.dumps(those_tweets), 'these_tweets': json.dumps(these_tweets)}
+		context = {'target': target, 'tweet_emotions': json.dumps(all_tweet_emotions), 'tweet_details': json.dumps(all_tweet_details)}
 
 		return render(request, 'pie_data.html', context)
 
