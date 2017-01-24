@@ -141,18 +141,18 @@ def show_top_emotion(emotion_dictionary):
 def pie_data(request):
 	if request.method == 'POST':
 		form = HandleForm(request.POST)
-
+		target = dict()
 		if form.is_valid():
 
 			target_handle = form.cleaned_data['target_handle']
 			number_of_tweets = form.cleaned_data['number_of_tweets']
 			
 			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
-
+			print(rawtweepy)
 				
 			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
 
-			target = dict()
+			# target = dict()
 			target['name'] = user.name
 			target['screen_name'] = user.screen_name
 
