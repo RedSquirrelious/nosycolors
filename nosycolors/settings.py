@@ -27,6 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # *************************************
 # NOT SURE IF THIS BELONGS HERE??
+print(os.environ)
 TWITTER_AUTH = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
 TWITTER_AUTH.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_SECRET'])
 
@@ -94,9 +95,9 @@ WSGI_APPLICATION = 'nosycolors.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': DATABASE_NAME,
-        'USER': USER_NAME,
-        'PASSWORD': DATABASE_KEY,
+        'NAME': os.environ['DATABASE_NAME'],
+        'USER': os.environ['USER_NAME'],
+        'PASSWORD': os.environ['DATABASE_KEY'],
         'HOST': 'localhost',
         'PORT': '3306',
     }
