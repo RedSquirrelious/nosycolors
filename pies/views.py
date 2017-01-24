@@ -147,10 +147,10 @@ def pie_data(request):
 			target_handle = form.cleaned_data['target_handle']
 			number_of_tweets = form.cleaned_data['number_of_tweets']
 			
-			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
+			rawtweepy = os.environ['AUTHORIZED_USER'].user_timeline(screen_name=target_handle, count=number_of_tweets)
 
 				
-			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
+			user = os.environ['AUTHORIZED_USER'].get_user(screen_name=target_handle)
 
 			target = dict()
 			target['name'] = user.name
@@ -169,7 +169,7 @@ def pie_data(request):
 				tweet['id'] = test_tweet.id_str
 				these_tweets.append(tweet)
 
-				emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, test_tweet.text)
+				emotions = find_strongest_emotions_in_tweet(os.environ['HOST'], os.environ['DATABASE_NAME'], os.environ['USER_NAME'], os.environ['DATABASE_KEY'], test_tweet.text)
 
 				count = show_top_emotion(emotions)
 

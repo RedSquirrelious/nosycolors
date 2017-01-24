@@ -128,7 +128,7 @@ def classify(request):
 			target_handle = form.cleaned_data['target_handle']
 			number_of_tweets = form.cleaned_data['number_of_tweets']
 			
-			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
+			rawtweepy = os.environ['AUTHORIZED_USER'].user_timeline(screen_name=target_handle, count=number_of_tweets)
 
 			tweets = list(map(lambda t:t.text, rawtweepy))
 
@@ -139,7 +139,7 @@ def classify(request):
 				feels_and_tweets = dict()
 
 				tweet_words = process(tweet)
-				strongest_emotion = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, tweet_words)
+				strongest_emotion = find_strongest_emotions_in_tweet(os.environ['HOST'], os.environ['DATABASE_NAME'], os.environ['USER_NAME'], os.environ['DATABASE_KEY'], tweet_words)
 
 				feels_and_tweets['text'] = tweet
 				if strongest_emotion:
@@ -173,10 +173,10 @@ def tweeting(request):
 			target_handle = form.cleaned_data['target_handle']
 			number_of_tweets = form.cleaned_data['number_of_tweets']
 			
-			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
+			rawtweepy = os.environ['AUTHORIZED_USER'].user_timeline(screen_name=target_handle, count=number_of_tweets)
 
 				
-			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
+			user = os.environ['AUTHORIZED_USER'].get_user(screen_name=target_handle)
 			target = dict()
 			target['name'] = user.name
 			target['screen_name'] = user.screen_name
