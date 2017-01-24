@@ -147,10 +147,10 @@ def pie_data(request):
 			target_handle = form.cleaned_data['target_handle']
 			number_of_tweets = form.cleaned_data['number_of_tweets']
 			
-			rawtweepy = os.environ['AUTHORIZED_USER'].user_timeline(screen_name=target_handle, count=number_of_tweets)
+			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
 
 				
-			user = os.environ['AUTHORIZED_USER'].get_user(screen_name=target_handle)
+			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
 
 			target = dict()
 			target['name'] = user.name
