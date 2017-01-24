@@ -1,7 +1,7 @@
 import csv
 
 import json
-
+import logging
 import os
 from operator import itemgetter
 import string
@@ -38,6 +38,8 @@ from nltk.corpus import stopwords
 
 punct = list(string.punctuation)
 stopword_list = stopwords.words('english') + punct + ['rt', 'via', '...', '…']
+
+logger = logging.getLogger(__name__)
 
 
 class IndexView(TemplateView):
@@ -139,17 +141,17 @@ def show_top_emotion(emotion_dictionary):
 
 
 def pie_data(request):
-
+	logger.error('made it to pie data')
 	if request.method == 'POST':
 		form = HandleForm(request.POST)
 		target = dict()
 		if form.is_valid():
-
+			logger.error('form is valid')
 			target_handle = form.cleaned_data['target_handle']
 			number_of_tweets = form.cleaned_data['number_of_tweets']
 			
 			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
-			# print(rawtweepy)
+			logger.error('twitter talks back')
 				
 			user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
 
