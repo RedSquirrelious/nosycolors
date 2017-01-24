@@ -188,7 +188,7 @@ def tweeting(request):
 
 				tweet_words = process(raw_tweet.text)
 				
-				strongest_emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, tweet_words)
+				strongest_emotions = find_strongest_emotions_in_tweet(os.environ['HOST'], os.environ['DATABASE_NAME']' os.environ['USER_NAME']' os.environ['DATABASE_KEY'], tweet_words)
 
 				if strongest_emotions:
 					strongest_emotions = ", ".join(strongest_emotions)

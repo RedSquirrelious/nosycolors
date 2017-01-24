@@ -23,12 +23,20 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-
+DATABASE_NAME = os.environ['DATABASE_NAME']
+DATABASE_KEY = os.environ['DATABASE_KEY']
+USER_NAME = os.environ['USER_NAME']
+CONSUMER_KEY = os.environ['CONSUMER_KEY']
+CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
+ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+ACCESS_SECRET = os.environ['ACCESS_SECRET']
+HOST = os.environ['HOST']
+CALLBACK_URL = os.environ['CALLBACK_URL']
 
 # *************************************
 # NOT SURE IF THIS BELONGS HERE??
-TWITTER_AUTH = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-TWITTER_AUTH.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+TWITTER_AUTH = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
+TWITTER_AUTH.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_SECRET'])
 
 # has a greater rate limit than OAuth
 # TWITTER_AUTH = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
