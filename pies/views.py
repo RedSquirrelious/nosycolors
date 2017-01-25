@@ -50,9 +50,11 @@ class AboutView(TemplateView):
     template_name = "about.html"
 
 
-# def process_datetime(tweet_date):
-# 	ts = datetime.strptime(tweet_date,'%a %b %d %H:%M:%S +0000 %Y')
-# 	return ts
+def json_serial(obj):
+	if isinstance(obj, datetime):
+		serial = obj.isoformat()
+		return serial
+	raise TypeError ("Type not serializable")
 
 
 # NEEDED FOR CLASSIFY
@@ -175,8 +177,7 @@ def pie_data(request):
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
-				print(test_tweet.created_at)
-				tweet['created_at'] = test_tweet.created_at
+				tweet['created_at'] = json_serial(test_tweet.created_at)
 
 				all_tweet_details.append(tweet)
 
