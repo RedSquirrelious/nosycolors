@@ -183,7 +183,7 @@ function clicked(d) {
 
 	d3.select('#tweet_view')
 	.text("")
-	.html(function(d) { return targetthing.name + ' (re)Tweeted: "' + otherthing[thatpie].text + " on " + otherthing[thatpie].created_at;}) 
+	.text(function(d) { return targetthing.name + ' (re)Tweeted: "' + otherthing[thatpie].text + " on " + str(otherthing[thatpie].created_at);}) 
 
 };
 
