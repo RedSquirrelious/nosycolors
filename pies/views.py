@@ -177,7 +177,7 @@ def pie_data(request):
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
-				tweet['created_at'] = json_serial(test_tweet.created_at)
+				tweet['created_at'] = str(test_tweet.created_at)
 
 				all_tweet_details.append(tweet)
 
