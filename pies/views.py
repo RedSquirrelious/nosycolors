@@ -1,7 +1,6 @@
 import csv
 
-import datetime
-from datetime import date
+from datetime import datetime
 import json
 import logging
 import os
@@ -51,8 +50,8 @@ class AboutView(TemplateView):
     template_name = "about.html"
 
 
-def process_date(tweet_date):
-	ts = date.strftime('%Y-%m-%d %H:%M:%S', date.strptime(tweet_date,'%a %b %d %H:%M:%S +0000 %Y'))
+def process_datetime(tweet_date):
+	ts = datetime.strptime(tweet_date,'%a %b %d %H:%M:%S +0000 %Y')
 	return ts
 
 
@@ -176,7 +175,7 @@ def pie_data(request):
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
-				tweet['created_at'] = process_date(test_tweet.created_at)
+				tweet['created_at'] = process_datetime(test_tweet.created_at)
 
 				all_tweet_details.append(tweet)
 
