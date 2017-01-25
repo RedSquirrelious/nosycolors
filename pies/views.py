@@ -50,9 +50,9 @@ class AboutView(TemplateView):
     template_name = "about.html"
 
 
-def process_datetime(tweet_date):
-	ts = datetime.strptime(tweet_date,'%a %b %d %H:%M:%S +0000 %Y')
-	return ts
+# def process_datetime(tweet_date):
+# 	ts = datetime.strptime(tweet_date,'%a %b %d %H:%M:%S +0000 %Y')
+# 	return ts
 
 
 # NEEDED FOR CLASSIFY
@@ -175,7 +175,8 @@ def pie_data(request):
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
-				tweet['created_at'] = process_datetime(test_tweet.created_at)
+				print(test_tweet.created_at)
+				# tweet['created_at'] = process_datetime(test_tweet.created_at)
 
 				all_tweet_details.append(tweet)
 
