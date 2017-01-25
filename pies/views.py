@@ -1,4 +1,5 @@
 import csv
+
 import datetime
 from datetime import date
 import json
@@ -51,7 +52,7 @@ class AboutView(TemplateView):
 
 
 def process_date(tweet_date):
-	ts = datetime.strftime('%Y-%m-%d %H:%M:%S', datetime.strptime(tweet_date,'%a %b %d %H:%M:%S +0000 %Y'))
+	ts = date.strftime('%Y-%m-%d %H:%M:%S', date.strptime(tweet_date,'%a %b %d %H:%M:%S +0000 %Y'))
 	return ts
 
 
