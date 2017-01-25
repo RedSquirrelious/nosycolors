@@ -1,31 +1,38 @@
 {% extends 'base.html' %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Feeling Nosy?{% endblock %}</title>
+    <meta charset="UTF-8">
+    <title>{% block title %}Feeling Nosy?{% endblock %}</title>
 </head>
+
 <body>
-  {% block pagecontent %}
-<section class="form_wrapper">
-<form action="pie_data/" method="post" class="small-6 columns" id="nosy_form">
+    {% block pagecontent %}
+    <div class="row nosy">
+      <h2 class="nosy_query small-12 medium-12">How... <i>are</i>... they feeling?</h2>
+    	<div class='nosy_form small-12 medium-3 columns'>
 
-    {% csrf_token %}
+        <form action="pie_data/" method="post" class='nosy_form'>
+            {% csrf_token %}
+            <label for="target_handle" class="nosy_form">Twitter Handle: </label>
+            <input id="target_handle" type="text" name="target_handle">
+            <label for="number_of_tweets" class="nosy_form">How many tweets?</label>
+            <input id="number_of_tweets" type="integer" name="number_of_tweets">
+            <input type="submit" value="Get Nosy">
+            <label class='disclaimer'>(Max. is 100)</label>
+        </form>
+        </div>
+        <div class='callout small-12 medium-6 columns'>
+            <label class="nosy_form">The Deal</label>
+            <p>Here it is: You know someone. Someone who's on Twitter. You're curious about this Someone. You want to know what they're saying, how they're feeling. Sure, you could read their tweets and guess.</p>
+            <p>But maybe that's not enough.</p>
+            <p>Maybe you don't want to do the work.</p>
+            <p>Or maybe, just maybe, you trust computational linguistics and want science to bless your guess.</p>
+            <p>This site is for you.</p>
+        </div>
+    </div>
 
-    <label for="target_handle">Twitter Handle: </label>
-
-    <input id="target_handle" type="text" name="target_handle">
-
-    <label for="number_of_tweets">How many tweets?  (Max. is 100) </label>
-
-    <input id="number_of_tweets" type="integer" name="number_of_tweets">
-
-    
-
-
-    <input type="submit" value="OK">
-</form>
-</section>
     {% endblock %}
 </body>
 

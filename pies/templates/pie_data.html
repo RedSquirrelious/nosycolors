@@ -8,12 +8,11 @@
     <title>Nosy Colors</title>
     <link rel="stylesheet" href="{% static 'css/reset.css' %}" type="text/css">
 		<link rel="stylesheet" href="{% static 'css/foundation.css' %}">
-		<link rel="stylesheet" href="{% static 'css/app.css' %}">
+		<link href="https://fonts.googleapis.com/css?family=Cherry+Cream+Soda|Lato" rel="stylesheet">
 		<link rel="stylesheet" href="{% static 'css/main.css' %}">
 		<script src="{% static 'js/d3.min.js' %}"></script>
 		<script src="{% static 'js/pie_data.js' %}"></script>		
 
-		<!-- <script src="//d3js.org/d3.v3.min.js"></script> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
 
 </head>
@@ -23,33 +22,33 @@
     {% block pagecontent %}
 
 
+<body>
+    <div class='top-bar'>
+      <div class="top-bar-title">
+        <a href="{% url 'index' %}"><h1>Feeling Nosy?</h1></a>
+      </div>
 
-    <header class="row">
-        <a href="{% url 'index' %}" class='page_title'><h1 class='small-9 columns'>Feeling Nosy?</h1></a>
-      
-      <nav class='small-3 columns'>
-        <a href="{% url 'index' %}" class='small-3 columns button'>Get Nosy</a>
-        <a href="{% url 'test_pie' %}" class='small-3 columns button'>Test</a>
-        <a href="{% url 'about' %}" class='small-3 columns button'>About</a>
-       </nav>
+      <div class='top-bar-right'>
+      	<ul class='menu'>
+        	<li><a href="{% url 'about' %}">About</a></li>
+        </ul>
+       </div>
+     </div>
 
-    </header>
 
-	<section class='wrapper row'>
-
-		<h4 class="nosy_query row">So... <i>Nosy Person</i>... they're feeling... <i>all these feels...</i></h4>
+    <div class="row nosy">
+      <h2 class="nosy_query small-12 small-centered medium-12">So... <i>Nosy Person</i>... they're feeling... <i>all these feels...</i></h2>
 
 	<section id='hold_tweet_view' class='row'>
 		
-		<article id='tweet_view'></article>
+		<article id='tweet_view' class="small-12 small-centered columns"></article>
 	
 	</section>
-
-	<div class='testpie row'>
-	
+</div>
+	<div class='testpie_pan row'>
+	<div class='testpie small-12 columns'>
 	</div>
-
-	</section>
+	</div>
 
 
 <script>
@@ -75,14 +74,10 @@ var color = d3.scale.ordinal()
 	.range(["#e34141", "#4545ec", "#652e2e", "#272323", "#eeee4b", "#808080", "#944fba", "#22c322"]);
 	// .range(red, blue, brown, black, yellow, grey, purple,green)
 
-var m = 7,
+var m = 3,
     r = 60;
 
 
-var scoring = function(d) {
-	console.log(d);
-	return d.sentiment.score;
-};
 
 var pie = d3.layout.pie()
 	.value( function(d) { return d.scores; })
@@ -96,7 +91,7 @@ var arc = d3.svg.arc()
 var pie = d3.layout.pie()
     .value(function(d) { return +d.score; })
     .sort(null);
-    // .sort(function(a, b) { return b.score - a.score; });
+
 
 var data = {};
 
@@ -111,10 +106,8 @@ var tweet_emoting = d3.nest()
 var svg = d3.select(".testpie").selectAll("div")
 			.data(tweet_scoring)
 			.enter().append("div")
-			.attr("class", "emotion_donut")
-			// .attr("class", "svg-container")
-   		// .classed("svg-container", true)
-				.append("svg")
+				.attr("class", "emotion_donut")
+			.append("svg")
 		    .attr("width", (r + m) * 2)
 		    .attr("height", (r + m) * 2)
 		    .attr("class", "tweet")
@@ -127,7 +120,6 @@ svg.append("text")
   .attr("dy", ".35em")
   .attr("text-anchor", "middle")
   .attr("class", "tweet_text")
-  // .text(function(d) {return this._current.key;})
   .attr("id", function(d) { return "tweet_text_" + this._current.key; });
 
 
@@ -139,7 +131,6 @@ var g = svg.selectAll('g')
   		.each(function(d) { this._current = d; })
       .attr("d", arc)
       .attr("class", "emotionArc")
-      // .attr("class", this._current.data.tweet_id)
 	 		.attr("id", function(d, i) {return "emotionArc_" + i; })
       .style("fill", function(d) { return color(d.data.emotion); });
 
@@ -151,7 +142,7 @@ var g = svg.selectAll('g')
       // g.select("text").text(function(d) { return d.data.emotion; });      
 
       g.on("mouseover", function(obj){
-        // console.log(obj.data)
+
         svg.select("#tweet_text_"+ obj.data.tweet_id)
         .attr("fill", function(d) { return color(obj.data.emotion); })
         .attr("font-weight", "bold")
@@ -166,21 +157,18 @@ var g = svg.selectAll('g')
 
 
 function clicked(d) {
-	console.log(this);
-	var mypie = d3.select(this);
-	console.log(mypie[0][0].viewportElement.id);
-	var bigpie = ("#"+mypie[0][0].viewportElement.id);
-	console.log(bigpie);
-	var thatpie = bigpie.replace(/[^0-9]/gi, '');
-	console.log(thatpie);
 
-	// d3.select(".nosy_query")
-	// .html("")
-	// .html(function(d) { return "'" + target.name "'" + " is feeling all these feels...";});
+	var mypie = d3.select(this);
+
+	var bigpie = ("#"+mypie[0][0].viewportElement.id);
+
+	var thatpie = bigpie.replace(/[^0-9]/gi, '');
+
 
 	d3.select('#tweet_view')
 	.text("")
-	.html(function(d) { return "[" + otherthing[thatpie].created_at + "] " + otherthing[thatpie].text;})
+	.html(function(d) { return "<h5>[" + otherthing[thatpie].created_at + "] " + otherthing[thatpie].text; + "</h5>"})
+	.attr("class", "small-12 columns")
 
 };
 
