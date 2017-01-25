@@ -75,11 +75,8 @@ var color = d3.scale.ordinal()
 	.range(["#e34141", "#4545ec", "#652e2e", "#272323", "#eeee4b", "#808080", "#944fba", "#22c322"]);
 	// .range(red, blue, brown, black, yellow, grey, purple,green)
 
-var m = 5,
-    r = 45,
-    height = 300,
-    width = 300,
-    centered;
+var m = 7,
+    r = 60;
 
 
 var scoring = function(d) {
@@ -95,10 +92,6 @@ var pie = d3.layout.pie()
 var arc = d3.svg.arc()
         .innerRadius(r / 2)
         .outerRadius(r);
-
-var arcOver = d3.svg.arc()
-		.innerRadius(r * 2 )
-		.outerRadius(r * 4);
 
 var pie = d3.layout.pie()
     .value(function(d) { return +d.score; })
