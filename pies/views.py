@@ -1,5 +1,5 @@
 import csv
-
+from datetime import date
 import json
 import logging
 import os
@@ -49,17 +49,10 @@ class AboutView(TemplateView):
     template_name = "about.html"
 
 
+def process_date(tweet_date):
+	ts = datetime.strftime('%Y-%m-%d %H:%M:%S', datetime.strptime(tweet_date,'%a %b %d %H:%M:%S +0000 %Y'))
+	return ts
 
-def json_serial(obj):
-    """JSON serializer for objects not serializable by default json code"""
-
-    if isinstance(obj, datetime):
-        serial = obj.isoformat()
-        return serial
-    raise TypeError ("Type not serializable")
-
-def utc_to_local(utc_dt):
-    return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
 # NEEDED FOR CLASSIFY
 def process(text, tokenizer=TweetTokenizer(), stopwords=[]):
@@ -82,7 +75,7 @@ def query_emolex(host, database, user, password, tweet):
 	for i in range(len(tweet_words)):
 		tweet_words[i] = regex.sub('', tweet_words[i])
 
-	import time; before = time.time()
+
 
 	query = "SELECT w.word, e.emotion, w.count, wes.score, wes.word_id, wes.emotion_id, w.id, e.id FROM words w JOIN word_emotion_score wes ON wes.word_id = w.id JOIN emotions e ON e.id = wes.emotion_id WHERE w.word IN (%s)"
  
@@ -99,7 +92,7 @@ def query_emolex(host, database, user, password, tweet):
 
 	cursor.close()
 	cnx.close()
-	logger.error(time.time() - before)
+
 	emotion_list = dict()
 
 	for word in results:
@@ -181,7 +174,7 @@ def pie_data(request):
 				tweet = {}
 				tweet['text']= test_tweet.text
 				tweet['id'] = test_tweet.id_str
-				# tweet['date'] = utc_to_local(test_tweet.created_at)
+				tweet['created_at'] = process_date(test_tweet.created_at)
 
 				all_tweet_details.append(tweet)
 
