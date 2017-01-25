@@ -185,7 +185,7 @@ function clicked(d) {
 
 	d3.select('#tweet_view')
 	.text("")
-	.text(function(d) { return "[" + otherthing[thatpie].created_at + "] " + '          "' + otherthing[thatpie].text + '"';}) 
+	.html(function(d) { return "[" + otherthing[thatpie].created_at + "]" + "<br/" + otherthing[thatpie].text;}) 
 
 };
 
