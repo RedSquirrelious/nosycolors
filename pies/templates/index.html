@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +23,7 @@
             <input type="submit" value="Get Nosy">
             <label class='disclaimer'>(Max. is 100)</label>
         </form>
-
+            	<img class='logo small-12 small-centered medium-6 columns' src="{%static 'purple-nose-moustache-glasses.jpg' %}">
         </div>
         <div class='callout small-12 medium-6 columns'>
             <label class="nosy_form">The Deal</label>
