@@ -159,6 +159,8 @@ def pie_data(request):
 
 			target_handle = form.cleaned_data['target_handle']
 			number_of_tweets = form.cleaned_data['number_of_tweets']
+			if number_of_tweets > 100:
+				number_of_tweets = 100
 			
 			rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
 
@@ -197,8 +199,6 @@ def pie_data(request):
 						all_tweet_emotions.append(one_emotion_hash)
   
 			context = {'target': target, 'tweet_emotions': json.dumps(all_tweet_emotions), 'tweet_details': json.dumps(all_tweet_details)}
-		else:
-			  return render_to_response('index.html', {'form': form})
 		return render(request, 'pie_data.html', context)
 
 def test_pie(request):
