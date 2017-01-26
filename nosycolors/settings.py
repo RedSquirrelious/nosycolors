@@ -44,7 +44,7 @@ AUTHORIZED_USER = tweepy.API(TWITTER_AUTH, wait_on_rate_limit=True, wait_on_rate
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '54.187.186.135', 'color-env.4yydtwdmva.us-west-2.elasticbeanstalk.com', 'www.redsquirrelious.io']
+ALLOWED_HOSTS = ['localhost', '54.187.186.135', 'color-env.4yydtwdmva.us-west-2.elasticbeanstalk.com', 'www.redsquirrelious.io', 'redsquirrelious.io']
 
 
 # Application definition
