@@ -29,9 +29,7 @@ header.row {
 	border-width: 3px;
 }
 
-a.page_title {
-	color: white;
-}
+
 
 .wrapper {
 	padding: 2%;
@@ -41,17 +39,6 @@ a.page_title {
 }
 
 
-
-
-
-nav {
-	display: flex;
-	justify-content: center;
-}
-
-nav a {
-	/*float: right;*/
-}
 
 .button, .menu {
 	background-color: #944fba;
@@ -118,16 +105,15 @@ label.nosy_form {
 }
 
 a {
-	color: black;
+	color: blue;
 }
 
 a:hover {
-	color: #944fba;
-	background: white;
+	color: gray;
 }
 
-hover {
-	background-color: #944fba;
+a:visited {
+	color: red;
 }
 
 
@@ -182,6 +168,4 @@ img.logo {
 	float: left;
 }
 
-footer a {
-	color: #944fba;
-}
+
