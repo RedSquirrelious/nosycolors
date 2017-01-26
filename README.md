@@ -1,6 +1,6 @@
 # nosycolors
 
-My capstone project for Ada Developers Academy.  I started just playing with data analysis and data visualization for my own entertainment.  Find it online [here](redsquirrelious.io).
+My capstone project for Ada Developers Academy.  I started just playing with data analysis and data visualization for my own entertainment.  Find it online [here](http://redsquirrelious.io).
 
 ## A Rundown
 *Pulls a given number of tweets for a given Twitter user.  
