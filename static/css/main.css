@@ -181,3 +181,7 @@ div.logo {
 img.logo {
 	float: left;
 }
+
+footer a {
+	color: #944fba;
+}
