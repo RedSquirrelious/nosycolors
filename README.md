@@ -1,6 +1,6 @@
 # nosycolors
 
-My capstone project for Ada Developers Academy.  I started just playing with data analysis and data visualization for my own entertainment.  It could conceivably show how a person's emotional state has trended recently, provided they use Twitter.
+My capstone project for [Ada Developers Academy](http://adadevelopersacademy.org).  I started just playing with data analysis and data visualization for my own entertainment.  It could conceivably show how a person's emotional state has trended recently, provided they use Twitter.
 Find it online [here](http://redsquirrelious.io).
 
 ## A Rundown
