@@ -1,6 +1,32 @@
+.top-bar.expanded .title-area, .contain-to-grid, .top-bar, .top-bar-section ul, .top-bar-section li:not(.has-form) a:not(.button)  { background: #944fba;
+			border-bottom: solid black;
+			border-width: 3px;
+			 }
+
+.top-bar-title h1 {
+	color: white;
+	font-size: 5rem;
+	margin-left: 2rem;
+	font-family: 'Cherry Cream Soda', cursive;
+
+}
+
+.top-bar-left h5 {
+	vertical-align: bottom;
+}
+
+.top-bar ul {
+	background-color: #944fba;
+}
+
+.panel {
+
+}
+
 header.row {
 	background-color: #944fba;
 	border-bottom: solid black;
+	border-width: 3px;
 }
 
 a.page_title {
@@ -8,22 +34,14 @@ a.page_title {
 }
 
 .wrapper {
-	padding: 0 5%;
+	padding: 2%;
 	display: block;
+	margin: 0 2%;
 
 }
 
 
-.form-wrapper {
-	padding: 5%;
-	display: flex;
-	justify-content: center;
-}
 
-#nosy_form {
-	width: 50%;
-	position: relative;
-}
 
 
 nav {
@@ -35,38 +53,102 @@ nav a {
 	/*float: right;*/
 }
 
-nav .button {
+.button, .menu {
 	background-color: #944fba;
-	/*float: center;*/
+	margin-right: 2rem;
+
 }
 
-h1.set-header {
-	font-family: verdana;
-	margin-top: .2em;
-	margin-bottom: .2em
+.menu ul {
+	background-color: #944fba;
+}
+
+.menu li {
+	background-color: #944fba;
+}
+
+.menu li a {
+	background-color: white;
+	border: solid black;
+	border-width: 1px;
+	color: black;
+	margin: 3px;
+	font-family: 'Lato', sans-serif;
+}
+
+.nosy_menu {
+	border: solid black;
+	border-width: 1px;
+}
+
+/*div.nosy_query {
+	margin: 1rem 0;
+}*/
+
+.nosy_query {
+	margin: 1rem;
+	font-family: 'Lato', sans-serif;
+
+}
+
+.nosy_form h2 {
+	font-family: 'Lato', sans-serif;
+	margin-bottom: 1rem;	
+}
+
+.nosy_form {
+	margin-bottom: 2rem;
+	font-family: 'Lato', sans-serif;
+}
+
+
+label.nosy_form {
+	font-size: 1.5rem;
+	margin-bottom: 0;
+}
+
+
+.callout {
+	/*margin-top: 1rem;*/
+	padding: 2rem;
+}
+
+.callout h4 {
+	font-family: 'Lato', sans-serif;
 }
 
 a {
 	color: black;
 }
 
-.nosy_query {
-	margin: 1% 0 1% 0;
+a:hover {
+	color: #944fba;
+	background: white;
 }
+
+hover {
+	background-color: #944fba;
+}
+
 
 #hold_tweetview {
 	display: flex;
 	justify-content: center;
+	margin: auto;
+	padding: 1rem;
 }
 
 #tweet_view {
 	display: block;
-	margin: 0% 5% 2% 15%;
-	font-size: .8em;
+	margin: 0 1rem 2rem 1rem;
+	/*font-size: 1.5rem;*/
+	width: 80%;
 
 }
 
-.testpie {
+.testpie_pan {
+	display: flex;
+	justify-content: center
 
 }
 
