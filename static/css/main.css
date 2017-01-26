@@ -166,6 +166,18 @@ hover {
 	width: 80%;
 }
 
-.about_text {
+div.logo {
+	display: flex;
+	justify-content: center;
+}
 
+.logo {
+	display: block;
+	height: 15rem;
+	width: 15rem;
+	float:left;
+}
+
+img.logo {
+	float: left;
 }
