@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Feeling Nosy?{% endblock %}</title>
+    <meta charset="UTF-8">
+    <title>{% block title %}Feeling Nosy?{% endblock %}</title>
 </head>
+
 <body class="about row">
-  {% block pagecontent %}
-    <h3 class="about_header row">All About Being Nosy</h3>
-    <p class="about_text row">I'm trying to play with data and color. It's turning out how it's turning out.</p>
+    {% block pagecontent %}
+    <div class="row nosy">
+        <h2 class="nosy_query small-12 medium-12">All About Being Nosy</h2>
+        <p class='small-12 medium-3 columns'>I'm trying to play with data and color. It's turning out how it's turning out.</p>
+    </div>
     {% endblock %}
 </body>
 
