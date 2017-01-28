@@ -24,14 +24,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ['NC_SECRET_KEY']
 
 
 # *************************************
 # NOT SURE IF THIS BELONGS HERE??
 # print(os.environ)
-TWITTER_AUTH = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-TWITTER_AUTH.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_SECRET'])
+TWITTER_AUTH = tweepy.OAuthHandler(os.environ['NC_CONSUMER_KEY'], os.environ['NC_CONSUMER_SECRET'])
+TWITTER_AUTH.set_access_token(os.environ['NC_ACCESS_TOKEN'], os.environ['NC_ACCESS_SECRET'])
 
 # has a greater rate limit than OAuth
 # TWITTER_AUTH = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -96,11 +96,11 @@ WSGI_APPLICATION = 'nosycolors.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ['DATABASE_NAME'],
-        'USER': os.environ['USER_NAME'],
-        'PASSWORD': os.environ['DATABASE_KEY'],
-        'HOST': os.environ['HOST'],
-        'PORT': os.environ['PORT'],
+        'NAME': os.environ['NC_DATABASE_NAME'],
+        'USER': os.environ['NC_USER_NAME'],
+        'PASSWORD': os.environ['NC_DATABASE_KEY'],
+        'HOST': os.environ['NC_HOST'],
+        'PORT': os.environ['NC_PORT'],
     }
 }
 

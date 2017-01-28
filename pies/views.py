@@ -183,7 +183,7 @@ def pie_data(request):
 
 				all_tweet_details.append(tweet)
 
-				emotions = find_strongest_emotions_in_tweet(os.environ['HOST'], os.environ['DATABASE_NAME'], os.environ['USER_NAME'], os.environ['DATABASE_KEY'], test_tweet.text)
+				emotions = find_strongest_emotions_in_tweet(os.environ['NC_HOST'], os.environ['NC_DATABASE_NAME'], os.environ['NC_USER_NAME'], os.environ['NC_DATABASE_KEY'], test_tweet.text)
 
 				count = show_top_emotion(emotions)
 
