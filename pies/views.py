@@ -212,5 +212,47 @@ def test_pie(request):
 	return render(request, 'test_pie.html', context)
 
 
+def hash_pie(request):
+	if request.method == 'POST':
+		form = HandleForm(request.POST)
+
+		if form.is_valid():
+
+			target_handle = form.cleaned_data['target_handle']
+			number_of_tweets = form.cleaned_data['number_of_tweets']
+	
+			hashtaggery = settings.AUTHORIZED_USER.search(q=target_handle, lang='en')
+
+			all_tweet_details = []
+			all_tweet_emotions = []
+
+			for tweet in hashtaggery:
+				hash_tweet = dict()
+				hash_tweet['text'] = tweet.text
+				hash_tweet['created_at'] = str(tweet.created_at)
+				hash_tweet['user'] = tweet.user.name
+				all_tweet_details.append(hash_tweet)
+
+				emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, tweet.text)
+
+				count = show_top_emotion(emotions)
+
+				for emotion in count:
+					one_emotion_hash = {}
+
+					if emotion[1] > 0:
+						one_emotion_hash['emotion'] = emotion[0]
+						one_emotion_hash['score'] = emotion[1]
+						one_emotion_hash['tweet_id'] = tweet.id
+						one_emotion_hash['tweet_text'] = tweet.text
+
+						all_tweet_emotions.append(one_emotion_hash)
+
+		# context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
+		# context = {'tweet_emotions': all_tweet_emotions}
+
+			context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
+	return render(request, 'hash_pie.html', context)
+
 
 
