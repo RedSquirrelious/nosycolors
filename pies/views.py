@@ -3,6 +3,7 @@ import csv
 from datetime import datetime
 import json
 import logging
+from logging import logger
 import os
 from operator import itemgetter
 import re
