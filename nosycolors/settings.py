@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import ast
+import string
 import tweepy
 from tweepy import OAuthHandler, AppAuthHandler
 
@@ -30,7 +31,11 @@ if 'RDS_HOSTNAME' in os.environ:
   TWITTER_AUTH = tweepy.AppHandler(os.environ['RDS_CONSUMER_KEY'], os.environ['RDS_CONSUMER_SECRET'])
   # TWITTER_AUTH = tweepy.OAuthHandler(os.environ['RDS_CONSUMER_KEY'], os.environ['RDS_CONSUMER_SECRET']),
   TWITTER_AUTH.set_access_token(os.environ['RDS_ACCESS_TOKEN'], os.environ['RDS_ACCESS_SECRET'])
-
+  CONSUMER_KEY = os.environ['RDS_CONSUMER_KEY']
+  CONSUMER_SECRET = os.environ['RDS_CONSUMER_SECRET']
+  ACCESS_TOKEN = os.environ['RDS_ACCESS_TOKEN']
+  ACCESS_SECRET = os.environ['RDS_ACCESS_SECRET']
+  CALLBACK_URL = os.environ['RDS_CALLBACK_URL']
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -43,21 +48,26 @@ if 'RDS_HOSTNAME' in os.environ:
     }
 else:
   SECRET_KEY = os.environ['NC_SECRET_KEY']
-  
-  TWITTER_AUTH = tweepy.AppHandler(os.environ['NC_CONSUMER_KEY'], os.environ['NC_CONSUMER_SECRET'])
-  # TWITTER_AUTH = tweepy.OAuthHandler(os.environ['NC_CONSUMER_KEY'], os.environ['NC_CONSUMER_SECRET']) 
-  TWITTER_AUTH.set_access_token(os.environ['NC_ACCESS_TOKEN'], os.environ['NC_ACCESS_SECRET'])
+  USER_NAME = os.environ['NC_DB_USER']
+  DATABASE_NAME = os.environ['NC_DB_NAME']
+  DATABASE_KEY = os.environ['NC_DB_KEY']
+  CONSUMER_KEY = os.environ['NC_CONSUMER_KEY']
+  CONSUMER_SECRET = os.environ['NC_CONSUMER_SECRET']
+  ACCESS_TOKEN = os.environ['NC_ACCESS_TOKEN']
+  ACCESS_SECRET = os.environ['NC_ACCESS_SECRET']
+  CALLBACK_URL = os.environ['NC_CALLBACK_URL']
+  HOST = os.environ['NC_HOST']
+  PORT = os.environ['NC_PORT']
 
-  DATABASES = {
-      'default': {
-          'ENGINE': 'django.db.backends.mysql',
-          'NAME': os.environ['NC_DATABASE_NAME'],
-          'USER': os.environ['NC_USER_NAME'],
-          'PASSWORD': os.environ['NC_DATABASE_KEY'],
-          'HOST': os.environ['NC_HOST'],
-          'PORT': os.environ['NC_PORT'],
-      }
-  }
+
+
+# SECRET_KEY = os.environ['NC_SECRET_KEY']
+
+# TWITTER_AUTH = tweepy.AppAuthHandler(os.environ['NC_CONSUMER_KEY'], os.environ['NC_CONSUMER_SECRET'])
+TWITTER_AUTH = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET) 
+TWITTER_AUTH.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+
+
 
 # *************************************
 # NOT SURE IF THIS BELONGS HERE??
@@ -125,7 +135,27 @@ WSGI_APPLICATION = 'nosycolors.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.environ['NC_DATABASE_NAME'],
+#         'USER': os.environ['NC_USER_NAME'],
+#         'PASSWORD': os.environ['NC_DATABASE_KEY'],
+#         'HOST': os.environ['NC_HOST'],
+#         'PORT': os.environ['NC_PORT'],
+#     }
+# }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': DATABASE_NAME,
+        'USER': USER_NAME,
+        'PASSWORD': DATABASE_KEY,
+        'HOST': HOST,
+        'PORT': PORT,
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
