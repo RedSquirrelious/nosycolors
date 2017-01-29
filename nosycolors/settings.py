@@ -29,23 +29,23 @@ print(os.environ)
 if 'RDS_HOSTNAME' in os.environ:
   SECRET_KEY = os.environ['RDS_SECRET_KEY']
 
-  TWITTER_AUTH = tweepy.AppHandler(os.environ['RDS_CONSUMER_KEY'], os.environ['RDS_CONSUMER_SECRET'])
-  # TWITTER_AUTH = tweepy.OAuthHandler(os.environ['RDS_CONSUMER_KEY'], os.environ['RDS_CONSUMER_SECRET']),
-  TWITTER_AUTH.set_access_token(os.environ['RDS_ACCESS_TOKEN'], os.environ['RDS_ACCESS_SECRET'])
-  CONSUMER_KEY = os.environ['RDS_CONSUMER_KEY']
-  CONSUMER_SECRET = os.environ['RDS_CONSUMER_SECRET']
-  ACCESS_TOKEN = os.environ['RDS_ACCESS_TOKEN']
-  ACCESS_SECRET = os.environ['RDS_ACCESS_SECRET']
-  CALLBACK_URL = os.environ['RDS_CALLBACK_URL']
+  TWITTER_AUTH = tweepy.AppHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
+  # TWITTER_AUTH = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']),
+  TWITTER_AUTH.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_SECRET'])
+  CONSUMER_KEY = os.environ['CONSUMER_KEY']
+  CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
+  ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+  ACCESS_SECRET = os.environ['ACCESS_SECRET']
+  CALLBACK_URL = os.environ['CALLBACK_URL']
   DATABASES = {
-      'default': {
-          'ENGINE': 'django.db.backends.mysql',
-          'NAME': os.environ['RDS_DB_NAME'],
-          'USER': os.environ['RDS_USERNAME'],
-          'PASSWORD': os.environ['RDS_PASSWORD'],
-          'HOST': os.environ['RDS_HOSTNAME'],
-          'PORT': os.environ['RDS_PORT'],
-      }
+    'default': {
+      'ENGINE': 'django.db.backends.mysql',
+      'NAME': os.environ['RDS_DB_NAME'],
+      'USER': os.environ['RDS_USERNAME'],
+      'PASSWORD': os.environ['RDS_PASSWORD'],
+      'HOST': os.environ['RDS_HOSTNAME'],
+      'PORT': os.environ['RDS_PORT'],
+    }
   }
 else:
   SECRET_KEY = os.environ['NC_SECRET_KEY']
