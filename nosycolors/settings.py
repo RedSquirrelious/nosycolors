@@ -147,16 +147,16 @@ WSGI_APPLICATION = 'nosycolors.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': DATABASE_NAME,
-        'USER': USER_NAME,
-        'PASSWORD': DATABASE_KEY,
-        'HOST': HOST,
-        'PORT': PORT,
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': DATABASE_NAME,
+#         'USER': USER_NAME,
+#         'PASSWORD': DATABASE_KEY,
+#         'HOST': HOST,
+#         'PORT': PORT,
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
