@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import ast
-import logger
+import logging
 import string
 import tweepy
 from tweepy import OAuthHandler, AppAuthHandler
