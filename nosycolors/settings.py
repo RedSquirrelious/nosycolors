@@ -31,7 +31,7 @@ if 'RDS_HOSTNAME' in os.environ:
 
   TWITTER_AUTH = tweepy.AppAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
   # TWITTER_AUTH = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']),
-  TWITTER_AUTH.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_SECRET'])
+  # TWITTER_AUTH.set_access_token(os.environ['ACCESS_TOKEN'], os.environ['ACCESS_SECRET'])
   CONSUMER_KEY = os.environ['CONSUMER_KEY']
   CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
   ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
