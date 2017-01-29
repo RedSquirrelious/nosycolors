@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import ast
-import logging
+
 import string
 import tweepy
 from tweepy import OAuthHandler, AppAuthHandler
@@ -20,7 +20,7 @@ from tweepy import OAuthHandler, AppAuthHandler
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-logger.error(os.environ)
+print(os.environ)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
