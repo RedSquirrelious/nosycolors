@@ -27,7 +27,7 @@ print(os.environ)
 # SECURITY WARNING: keep the secret key used in production secret!
 
 if 'RDS_HOSTNAME' in os.environ:
-  SECRET_KEY = os.environ['RDS_SECRET_KEY']
+  SECRET_KEY = os.environ['SECRET_KEY']
 
   TWITTER_AUTH = tweepy.AppHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
   # TWITTER_AUTH = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']),
