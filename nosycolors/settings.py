@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import ast
+import logger
 import string
 import tweepy
 from tweepy import OAuthHandler, AppAuthHandler
@@ -19,7 +20,7 @@ from tweepy import OAuthHandler, AppAuthHandler
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
+logger.error(os.environ)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -36,16 +37,16 @@ if 'RDS_HOSTNAME' in os.environ:
   ACCESS_TOKEN = os.environ['RDS_ACCESS_TOKEN']
   ACCESS_SECRET = os.environ['RDS_ACCESS_SECRET']
   CALLBACK_URL = os.environ['RDS_CALLBACK_URL']
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ['RDS_DB_NAME'],
-            'USER': os.environ['RDS_USERNAME'],
-            'PASSWORD': os.environ['RDS_PASSWORD'],
-            'HOST': os.environ['RDS_HOSTNAME'],
-            'PORT': os.environ['RDS_PORT'],
-        }
-    }
+  DATABASES = {
+      'default': {
+          'ENGINE': 'django.db.backends.mysql',
+          'NAME': os.environ['RDS_DB_NAME'],
+          'USER': os.environ['RDS_USERNAME'],
+          'PASSWORD': os.environ['RDS_PASSWORD'],
+          'HOST': os.environ['RDS_HOSTNAME'],
+          'PORT': os.environ['RDS_PORT'],
+      }
+  }
 else:
   SECRET_KEY = os.environ['NC_SECRET_KEY']
   USER_NAME = os.environ['NC_DB_USER']
