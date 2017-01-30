@@ -167,7 +167,7 @@ def process_tweets(user_id, number_of_tweets):
   for raw_tweet in rawtweepy:
 
     tweet = {}
-
+    tweet['text'] = raw_tweet.text
     tweet['id'] = raw_tweet.id_str
     tweet['created_at'] = str(raw_tweet.created_at)
     tweet['user'] = raw_tweet.user.name
@@ -198,9 +198,6 @@ def process_tweets(user_id, number_of_tweets):
 def pie_data(request):
 
   form_data = validate_form(request)
-  print(form_data)
-
-
 
   user = settings.AUTHORIZED_USER.get_user(screen_name=form_data['screen_name'])
 
