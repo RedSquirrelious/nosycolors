@@ -12,15 +12,13 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import ast
-
-import string
 import tweepy
 from tweepy import OAuthHandler, AppAuthHandler
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-print(os.environ)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -133,30 +131,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'nosycolors.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': os.environ['NC_DATABASE_NAME'],
-#         'USER': os.environ['NC_USER_NAME'],
-#         'PASSWORD': os.environ['NC_DATABASE_KEY'],
-#         'HOST': os.environ['NC_HOST'],
-#         'PORT': os.environ['NC_PORT'],
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': DATABASE_NAME,
-#         'USER': USER_NAME,
-#         'PASSWORD': DATABASE_KEY,
-#         'HOST': HOST,
-#         'PORT': PORT,
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
