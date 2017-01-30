@@ -16,8 +16,8 @@
 
         <form action="pie_data/" method="post" class='nosy_form'>
             {% csrf_token %}
-            <label for="target_handle" class="nosy_form">Twitter Handle: </label>
-            <input id="target_handle" type="text" name="target_handle">
+            <label for="screen_name" class="nosy_form">Twitter Handle: </label>
+            <input id="screen_name" type="text" name="screen_name">
             <label for="number_of_tweets" class="nosy_form">How many tweets?</label>
             <input id="number_of_tweets" type="integer" name="number_of_tweets">
             <input type="submit" value="Get Nosy">

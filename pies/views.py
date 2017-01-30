@@ -51,11 +51,18 @@ class AboutView(TemplateView):
     template_name = "about.html"
 
 
-def json_serial(obj):
-  if isinstance(obj, datetime):
-    serial = obj.isoformat()
-    return serial
-  raise TypeError ("Type not serializable")
+
+def validate_form(request):
+  if request.method == 'POST':
+    form = HandleForm(request.POST)
+
+  if form.is_valid():
+
+    screen_name = form.cleaned_data['screen_name']
+    number_of_tweets = form.cleaned_data['number_of_tweets']
+    context = {'screen_name': screen_name, 'number_of_tweets': number_of_tweets}
+    
+    return context
 
 
 # NEEDED FOR CLASSIFY
@@ -87,8 +94,6 @@ def query_emolex(host, database, user, password, tweet):
 
   query = query % in_p
   
-  print(query)
-  print(tweet_words)
   
   cursor.execute(query, tuple(tweet_words))
 
@@ -151,57 +156,57 @@ def show_top_emotion(emotion_dictionary):
   return emotion_hash.items()
 
 
+def process_tweets(user_id, number_of_tweets):
+
+  rawtweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
+
+
+  all_tweet_emotions = []
+  all_tweet_details = []
+
+  for raw_tweet in rawtweepy:
+
+    tweet = {}
+    tweet['text'] = raw_tweet.text
+    tweet['id'] = raw_tweet.id_str
+    tweet['created_at'] = str(raw_tweet.created_at)
+    tweet['user'] = raw_tweet.user.name
+    tweet['screen_name'] = raw_tweet.user.screen_name
+
+    all_tweet_details.append(tweet)
+
+    emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, raw_tweet.text)
+
+    count = show_top_emotion(emotions)
+
+    for emotion in count:
+      one_emotion_hash = {}
+
+      if emotion[1] > 0:
+        one_emotion_hash['emotion'] = emotion[0]
+        one_emotion_hash['score'] = emotion[1]
+        one_emotion_hash['tweet_id'] = raw_tweet.id
+        one_emotion_hash['tweet_text'] = raw_tweet.text
+
+        all_tweet_emotions.append(one_emotion_hash)
+
+    context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
+
+  return context
+
+
 def pie_data(request):
 
-  if request.method == 'POST':
-    form = HandleForm(request.POST)
+  form_data = validate_form(request)
 
-    if form.is_valid():
+  user = settings.AUTHORIZED_USER.get_user(screen_name=form_data['screen_name'])
 
-      target_handle = form.cleaned_data['target_handle']
-      number_of_tweets = form.cleaned_data['number_of_tweets']
-      if number_of_tweets > 100:
-        number_of_tweets = 100
-      
-      rawtweepy = settings.AUTHORIZED_USER.user_timeline(screen_name=target_handle, count=number_of_tweets)
+  tweet_data = process_tweets(user.id, form_data['number_of_tweets'])
 
-        
-      user = settings.AUTHORIZED_USER.get_user(screen_name=target_handle)
-
-      target = dict()
-      target['name'] = user.name
-      target['screen_name'] = user.screen_name
-
-      all_tweet_emotions = []
-      all_tweet_details = []
-
-      for test_tweet in rawtweepy:
-
-        tweet = {}
-        tweet['text']= test_tweet.text
-        tweet['id'] = test_tweet.id_str
-        tweet['created_at'] = str(test_tweet.created_at)
-
-        all_tweet_details.append(tweet)
-
-        # emotions = find_strongest_emotions_in_tweet(os.environ['NC_HOST'], os.environ['NC_DATABASE_NAME'], os.environ['NC_USER_NAME'], os.environ['NC_DATABASE_KEY'], test_tweet.text)
-        emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, test_tweet.text)
-
-        count = show_top_emotion(emotions)
-
-        for emotion in count:
-          one_emotion_hash = {}
-
-          if emotion[1] > 0:
-            one_emotion_hash['emotion'] = emotion[0]
-            one_emotion_hash['score'] = emotion[1]
-            one_emotion_hash['tweet_id'] = test_tweet.id
-            one_emotion_hash['tweet_text'] = test_tweet.text
-
-            all_tweet_emotions.append(one_emotion_hash)
+  context = {'tweet_emotions': json.dumps(tweet_data['tweet_emotions']), 'tweet_details': json.dumps(tweet_data['tweet_details'])}
   
-      context = {'target': target, 'tweet_emotions': json.dumps(all_tweet_emotions), 'tweet_details': json.dumps(all_tweet_details)}
-    return render(request, 'pie_data.html', context)
+  return render(request, 'pie_data.html', context)
+
 
 def test_pie(request):
 
@@ -220,10 +225,10 @@ def hash_pie(request):
 
     if form.is_valid():
 
-      target_handle = form.cleaned_data['target_handle']
+      screen_name = form.cleaned_data['screen_name']
       number_of_tweets = form.cleaned_data['number_of_tweets']
   
-      hashtaggery = settings.AUTHORIZED_USER.search(q=target_handle, lang='en')
+      hashtaggery = settings.AUTHORIZED_USER.search(q=screen_name, lang='en')
 
       all_tweet_details = []
       all_tweet_emotions = []
