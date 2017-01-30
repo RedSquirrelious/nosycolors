@@ -94,8 +94,6 @@ def query_emolex(host, database, user, password, tweet):
 
   query = query % in_p
   
-  print(query)
-  print(tweet_words)
   
   cursor.execute(query, tuple(tweet_words))
 
@@ -158,7 +156,7 @@ def show_top_emotion(emotion_dictionary):
   return emotion_hash.items()
 
 
-def check_emotions(user_id, number_of_tweets):
+def process_tweets(user_id, number_of_tweets):
 
   rawtweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
 
@@ -166,18 +164,18 @@ def check_emotions(user_id, number_of_tweets):
   all_tweet_emotions = []
   all_tweet_details = []
 
-  for test_tweet in rawtweepy:
+  for raw_tweet in rawtweepy:
 
     tweet = {}
-    tweet['text']= test_tweet.text
-    tweet['id'] = test_tweet.id_str
-    tweet['created_at'] = str(test_tweet.created_at)
-    tweet['user'] = test_tweet.user.name
-    tweet['screen_name'] = test_tweet.user.screen_name
+
+    tweet['id'] = raw_tweet.id_str
+    tweet['created_at'] = str(raw_tweet.created_at)
+    tweet['user'] = raw_tweet.user.name
+    tweet['screen_name'] = raw_tweet.user.screen_name
 
     all_tweet_details.append(tweet)
 
-    emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, test_tweet.text)
+    emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, raw_tweet.text)
 
     count = show_top_emotion(emotions)
 
@@ -187,12 +185,11 @@ def check_emotions(user_id, number_of_tweets):
       if emotion[1] > 0:
         one_emotion_hash['emotion'] = emotion[0]
         one_emotion_hash['score'] = emotion[1]
-        one_emotion_hash['tweet_id'] = test_tweet.id
-        one_emotion_hash['tweet_text'] = test_tweet.text
+        one_emotion_hash['tweet_id'] = raw_tweet.id
+        one_emotion_hash['tweet_text'] = raw_tweet.text
 
         all_tweet_emotions.append(one_emotion_hash)
 
-    # context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
     context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
 
   return context
@@ -207,7 +204,7 @@ def pie_data(request):
 
   user = settings.AUTHORIZED_USER.get_user(screen_name=form_data['screen_name'])
 
-  tweet_data = check_emotions(user.id, form_data['number_of_tweets'])
+  tweet_data = process_tweets(user.id, form_data['number_of_tweets'])
 
   context = {'tweet_emotions': json.dumps(tweet_data['tweet_emotions']), 'tweet_details': json.dumps(tweet_data['tweet_details'])}
   
