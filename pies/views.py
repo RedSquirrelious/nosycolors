@@ -8,12 +8,16 @@ import os
 from operator import itemgetter
 import re
 import string
+import tweepy
 
-
-from django.conf import settings
+from django.conf import settings, urls
+from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpResponse, Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, redirect
+from django.core.exceptions import ValidationError
+from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
+from django.shortcuts import render, redirect, render_to_response
+from django.template import RequestContext, loader
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
 
@@ -50,16 +54,21 @@ class IndexView(TemplateView):
 class AboutView(TemplateView):
     template_name = "about.html"
 
-
+class my404View(TemplateView):
+    template_name = "404.html"
 
 def validate_form(request):
+  form = HandleForm(request.POST or None)
+  
   if request.method == 'POST':
-    form = HandleForm(request.POST)
 
-  if form.is_valid():
-
-    screen_name = form.cleaned_data['screen_name']
-    number_of_tweets = form.cleaned_data['number_of_tweets']
+    if form.is_valid():
+      screen_name = form.cleaned_data['screen_name']
+      number_of_tweets = form.cleaned_data['number_of_tweets']
+    else:
+      screen_name = ''
+      number_of_tweets = ''
+    
     context = {'screen_name': screen_name, 'number_of_tweets': number_of_tweets}
     
     return context
@@ -86,14 +95,11 @@ def query_emolex(host, database, user, password, tweet):
   for i in range(len(tweet_words)):
     tweet_words[i] = regex.sub('', tweet_words[i])
 
-
-
   query = "SELECT w.word, e.emotion, w.count, wes.score, wes.word_id, wes.emotion_id, w.id, e.id FROM words w JOIN word_emotion_score wes ON wes.word_id = w.id JOIN emotions e ON e.id = wes.emotion_id WHERE w.word IN (%s)"
  
   in_p=', '.join(list(map(lambda x: '%s', tweet_words)))
 
   query = query % in_p
-  
   
   cursor.execute(query, tuple(tweet_words))
 
@@ -116,9 +122,9 @@ def query_emolex(host, database, user, password, tweet):
 
 
 
-def find_strongest_emotions_in_tweet(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, tweet):
+def find_strongest_emotions_in_tweet(host, database, user, database_key, tweet):
 
-  emotion_list = query_emolex(HOST, DATABASE_NAME, USER_NAME, DATABASE_KEY, tweet)
+  emotion_list = query_emolex(host, database, user, database_key, tweet)
   final_scoring = dict()
 
   for word in emotion_list:
@@ -158,54 +164,81 @@ def show_top_emotion(emotion_dictionary):
 
 def process_tweets(user_id, number_of_tweets):
 
-  rawtweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
+  try:
+    rawtweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
 
 
-  all_tweet_emotions = []
-  all_tweet_details = []
+    all_tweet_emotions = []
+    all_tweet_details = []
 
-  for raw_tweet in rawtweepy:
+    for raw_tweet in rawtweepy:
 
-    tweet = {}
-    tweet['text'] = raw_tweet.text
-    tweet['id'] = raw_tweet.id_str
-    tweet['created_at'] = str(raw_tweet.created_at)
-    tweet['user'] = raw_tweet.user.name
-    tweet['screen_name'] = raw_tweet.user.screen_name
+      tweet = {}
+      tweet['text'] = raw_tweet.text
+      tweet['id'] = raw_tweet.id_str
+      tweet['created_at'] = str(raw_tweet.created_at)
+      tweet['user'] = raw_tweet.user.name
+      tweet['screen_name'] = raw_tweet.user.screen_name
 
-    all_tweet_details.append(tweet)
+      all_tweet_details.append(tweet)
 
-    emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, raw_tweet.text)
+      emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, raw_tweet.text)
 
-    count = show_top_emotion(emotions)
+      count = show_top_emotion(emotions)
 
-    for emotion in count:
-      one_emotion_hash = {}
+      for emotion in count:
+        one_emotion_hash = {}
 
-      if emotion[1] > 0:
-        one_emotion_hash['emotion'] = emotion[0]
-        one_emotion_hash['score'] = emotion[1]
-        one_emotion_hash['tweet_id'] = raw_tweet.id
-        one_emotion_hash['tweet_text'] = raw_tweet.text
+        if emotion[1] > 0:
+          one_emotion_hash['emotion'] = emotion[0]
+          one_emotion_hash['score'] = emotion[1]
+          one_emotion_hash['tweet_id'] = raw_tweet.id
+          one_emotion_hash['tweet_text'] = raw_tweet.text
 
-        all_tweet_emotions.append(one_emotion_hash)
+          all_tweet_emotions.append(one_emotion_hash)
 
-    context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
+      context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
 
-  return context
+    return context
+  except tweepy.TweepError as e:
+    print (getExceptionMessage(e.reason))
+    pass
+
+
+
+
 
 
 def pie_data(request):
 
   form_data = validate_form(request)
 
-  user = settings.AUTHORIZED_USER.get_user(screen_name=form_data['screen_name'])
+  if not form_data['screen_name']:
+    messages.error(request, 'Please try again. Twitter handles must be alphanumeric (except for a starting "@"). Requested # of tweets must be > 0')
+    return HttpResponseRedirect('/')
 
-  tweet_data = process_tweets(user.id, form_data['number_of_tweets'])
+  try:
+    print("HELLO")
+    user = settings.AUTHORIZED_USER.get_user(screen_name=form_data['screen_name'])
+    print("GOODBYE")
+    tweet_data = process_tweets(user.id, form_data['number_of_tweets'])
 
-  context = {'tweet_emotions': json.dumps(tweet_data['tweet_emotions']), 'tweet_details': json.dumps(tweet_data['tweet_details'])}
-  
-  return render(request, 'pie_data.html', context)
+    context = {'tweet_emotions': json.dumps(tweet_data['tweet_emotions']), 'tweet_details': json.dumps(tweet_data['tweet_details'])}
+    
+    return render(request, 'pie_data.html', context)
+
+  except tweepy.TweepError as e:
+    emsg = e.api_code
+    print(emsg)
+    handle_tweepy_errors(request, emsg)
+
+
+
+
+
+
+
+
 
 
 def test_pie(request):
@@ -255,11 +288,28 @@ def hash_pie(request):
 
             all_tweet_emotions.append(one_emotion_hash)
 
-    # context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
-    # context = {'tweet_emotions': all_tweet_emotions}
-
       context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
-  return render(request, 'hash_pie.html', context)
+    else:
+      return request
+  return render(request, 'hash_pie.html/', context)
 
+def handle_tweepy_errors(request, code):
+  if code == 50:
+    messages.error(request, 'That user is not on Twitter')
+    print('EEEEK')
+    return bad_request(request)
 
-
+def bad_request(request):
+  print("UGHGHGHGHHGHG %s " %request)
+  template = loader.get_template('index.html')
+  messages.error(request, 'No such user')
+  # request.method = 'GET'
+  # request.path = '/'
+  form = HandleForm()
+  context = RequestContext(request)
+  # response = HttpResponse(template.render(context))
+  # # render_to_response(request, '/', RequestContext(request))
+  # # response.path = '/'
+  # response.status_code = 400
+  response =  HttpResponseNotFound('<h1>Page not found</h1>')
+  return response
