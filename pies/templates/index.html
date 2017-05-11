@@ -12,7 +12,16 @@
     {% block pagecontent %}
     <div class="row nosy">
       <h2 class="nosy_query small-12 medium-12">How... <i>are</i>... they feeling?</h2>
-    	<div class='nosy_form small-12 medium-3 columns'>
+    	<div class='nosy_form small-12 medium-6 columns'>
+        {% if messages %}
+          <ul>
+            {% for message in messages %}
+            <li>{{message}}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+
 
         <form action="pie_data/" method="post" class='nosy_form'>
             {% csrf_token %}
@@ -24,16 +33,19 @@
             <label class='disclaimer'>Max. you get back is 100.</label>  
             <label class='disclaimer'>Twitter's rules, not mine.</label>
         </form>
-            	<img class='logo small-12 small-centered medium-6 columns' src="{%static 'purple-nose-moustache-glasses.jpg' %}">
+          <img class='logo small-12 small-centered medium-6 columns' src="{%static 'purple-nose-moustache-glasses.jpg' %}">  
         </div>
-        <div class='callout small-12 medium-6 columns'>
-            <label class="nosy_form">The Deal</label>
+        <div class='small-12 medium-5 columns'>
+            <div class='callout'>
+            <label class="nosy_form" id='deal'>The Deal</label>
             <p>Here it is: You know someone. Someone who's on Twitter. You're curious about this Someone. You want to know what they're saying, how they're feeling. Sure, you could read their tweets and guess.</p>
             <p>But maybe that's not enough.</p>
             <p>Maybe you don't want to do the work.</p>
             <p>Or maybe, just maybe, you trust <a href='https://en.wikipedia.org/wiki/Computational_linguistics'>computational linguistics</a> and want science to bless your guess.</p>
             <p>This site is for you.</p>
         </div>
+        </div>
+
     </div>
 
     {% endblock %}

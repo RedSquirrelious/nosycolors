@@ -1,0 +1,180 @@
+.top-bar.expanded .title-area, .contain-to-grid, .top-bar, .top-bar-section ul, .top-bar-section li:not(.has-form) a:not(.button)  { background: #944fba;
+      border-bottom: solid black;
+      border-width: 3px;
+       }
+
+.top-bar-title h1 {
+  color: white;
+  font-size: 5rem;
+  margin-left: 2rem;
+  font-family: 'Cherry Cream Soda', cursive;
+
+}
+
+.top-bar-left h5 {
+  vertical-align: bottom;
+}
+
+.top-bar ul {
+  background-color: #944fba;
+}
+
+.panel {
+
+}
+
+header.row {
+  background-color: #944fba;
+  border-bottom: solid black;
+  border-width: 3px;
+}
+
+
+
+.wrapper {
+  padding: 2%;
+  display: block;
+  margin: 0 2%;
+
+}
+
+
+
+.button, .menu {
+  background-color: #944fba;
+  margin-right: 2rem;
+
+}
+
+.menu ul {
+  background-color: #944fba;
+}
+
+.menu li {
+  background-color: #944fba;
+}
+
+.menu li a {
+  background-color: white;
+  border: solid black;
+  border-width: 1px;
+  color: black;
+  margin: 3px;
+  font-family: 'Lato', sans-serif;
+}
+
+.nosy_menu {
+  border: solid black;
+  border-width: 1px;
+}
+
+/*div.nosy_query {
+  margin: 1rem 0;
+}*/
+
+.nosy_query {
+  margin: 1rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 2.5rem;
+}
+
+.nosy_form h2 {
+  font-family: 'Lato', sans-serif;
+  margin-bottom: 1rem;  
+}
+
+.nosy_form {
+
+  font-family: 'Lato', sans-serif;
+}
+
+
+label.nosy_form {
+  font-size: 1.5rem;
+  margin-bottom: 0;
+}
+
+
+.callout {
+  /*margin-top: 1rem;*/
+  padding: 2rem;
+  margin: 1rem;
+
+}
+
+.callout h4 {
+  font-family: 'Lato', sans-serif;
+}
+
+a {
+  color: blue;
+}
+
+a:hover {
+  color: gray;
+}
+
+a:visited {
+  color: red;
+}
+
+
+#hold_tweetview {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  padding: 1rem;
+}
+
+#tweet_view {
+  display: block;
+  margin: 0 1rem 2rem 1rem;
+  /*font-size: 1.5rem;*/
+  width: 80%;
+
+}
+
+.testpie_pan {
+  display: flex;
+  justify-content: center
+
+}
+
+
+.emotion_donut {
+  display: inline-block;
+}
+
+.tweet {
+  float: center;
+}
+
+.about_header {
+  display:block;
+  width: 80%;
+}
+
+div.logo {
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  margin-top: 2rem;
+  display: block;
+  height: 15rem;
+  width: 15rem;
+  float:left;
+}
+
+img.logo {
+  float: left;
+}
+
+ul .message {
+  color: red;
+}
+
+#deal {
+  margin-bottom: 1rem;
+}
