@@ -25,7 +25,7 @@ DATABASES = {
 }
 
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['color-env.4yydtwdmva.us-west-2.elasticbeanstalk.com', 'www.redsquirrelious.io', 'redsquirrelious.io']
 
