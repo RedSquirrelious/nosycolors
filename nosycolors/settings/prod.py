@@ -9,6 +9,10 @@ CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 ACCESS_SECRET = os.environ['ACCESS_SECRET']
 CALLBACK_URL = os.environ['CALLBACK_URL']
+HOST = os.environ['HOST']
+PORT = os.environ['PORT']
+
+
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.mysql',
