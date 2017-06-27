@@ -131,8 +131,11 @@ a:visited {
   margin: 0 1rem 2rem 1rem;
   /*font-size: 1.5rem;*/
   width: 80%;
-
+  font-style: italic;
+  font-size: 1rem;
 }
+
+
 
 .testpie_pan {
   display: flex;
@@ -145,9 +148,9 @@ a:visited {
   display: inline-block;
 }
 
-.tweet {
+/*.tweet {
   float: center;
-}
+}*/
 
 .about_header {
   display:block;

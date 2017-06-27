@@ -166,8 +166,10 @@ function clicked(d) {
 
   d3.select('#tweet_view')
   .text("")
-  .html(function(d) { return "<h5>[" + otherthing[thatpie].created_at + "] " + otherthing[thatpie].text; + "</h5>"})
+  .html(function(d) { return "<p>[" + otherthing[thatpie].created_at + "] " + otherthing[thatpie].text; + "</p>"})
   .attr("class", "small-12 columns")
+  // .style("font-style", "italic")
+  // .style("font-size", r/6+"px");
 
 };
 
