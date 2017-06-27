@@ -72,6 +72,11 @@ header.row {
   margin: 1rem 0;
 }*/
 
+/*.nosy {
+  display: inline-flex;
+  justify-content: center;
+}*/
+
 .nosy_query {
   margin: 1rem;
   font-family: 'Lato', sans-serif;
@@ -152,14 +157,15 @@ a:visited {
   float: center;
 }*/
 
-.about_header {
+/*#about {
   display:block;
   width: 80%;
-}
+}*/
 
 div.logo {
   display: flex;
   justify-content: center;
+  float: left;
 }
 
 .logo {
@@ -173,11 +179,11 @@ div.logo {
 img.logo {
   float: left;
 }
-
+/*
 ul .message {
   color: red;
 }
-
+*/
 #deal {
   margin-bottom: 1rem;
 }
