@@ -97,31 +97,37 @@ def query_emolex(host, database, user, password, query, tweet_tokens):
     cnx.close()
     return results
 
-def tally_emotion_scores_by_word(emotion_list, results):
+# tally_emotion_scores_by_word takes all emolex results of all words in tweet and 
+# returns dictionary with word as key and emotion-score tuples as values 
+# e.g., {'car': [('anger', 0.0), ('anticipation', 0.5), ('disgust', 0.0), ('fear', 0.25), ('joy', 1.0), ('sadness', 0.0), ('surprise', 0.0), ('trust', 0.25)]
+
+def tally_emotion_scores_per_word(results):
+    word_emotions_scores = dict()
     for word in results:
-      if word['word'] not in emotion_list:
-        emotion_list[word['word']] = []      
+      if word['word'] not in word_emotions_scores:
+        word_emotions_scores[word['word']] = []      
       average_score = word['score']/word['count']
       emotion_w_score = (word['emotion'], average_score)
-      emotion_list[word['word']].append(emotion_w_score)
-    return emotion_list
+      word_emotions_scores[word['word']].append(emotion_w_score)
+    return word_emotions_scores
 
 
-def find_strongest_emotions_in_tweet(emotion_list):
+def find_strongest_emotions_per_word(word_emotion_dict):
     final_scoring = dict()
-    for word in emotion_list:
-      highest_scoring_emotion = max(emotion_list[word], key=itemgetter(1))[0]
-      highest_score = max(emotion_list[word], key=itemgetter(1))[1]
+    for word in word_emotion_dict:
+      highest_scoring_emotion = max(word_emotion_dict[word], key=itemgetter(1))[0]
+      highest_score = max(word_emotion_dict[word], key=itemgetter(1))[1]
       final_scoring[word] = (highest_scoring_emotion, highest_score)
     return final_scoring
 
 
 
 
-def score_emotions(emotion_list):
+def score_emotions_in_all_words(tally):
     emotion_scores = {"anger": 0, "anticipation": 0, "disgust": 0, "fear": 0, "joy": 0, "sadness": 0, "surprise": 0, "trust": 0}
-    for word in emotion_list:
-      emotion = emotions[word]
+    for word in tally:
+      emotion = tally[word]
+      print(emotion)
       if emotion[0] == 'anger':
         emotion_scores['anger'] += 1
       if emotion[0] == 'anticipation':
@@ -138,11 +144,12 @@ def score_emotions(emotion_list):
         emotion_scores['surprise'] += 1
       if emotion[0] == 'trust':
         emotion_scores['trust'] += 1
+    print('hubba hubba')
     return emotion_scores.items()
 
 def get_tweets(user_id, number_of_tweets):
     try:
-      rawtweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
+      raw_tweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
       return raw_tweepy
     except tweepy.TweepError as e:
       print (getExceptionMessage(e.reason))
@@ -150,7 +157,7 @@ def get_tweets(user_id, number_of_tweets):
 
 def process_tweet_details(raw_tweepy):
     all_tweet_details = []
-    for raw_tweet in rawtweepy:
+    for raw_tweet in raw_tweepy:
       tweet = {}
       tweet['text'] = raw_tweet.text
       tweet['id'] = raw_tweet.id_str
@@ -176,20 +183,17 @@ def process_emotions(all_tweet_emotions, emotion_scores, raw_tweet_id, raw_tweet
 def construct_view_context(user_id, number_of_tweets):
     raw_tweepy = get_tweets(user_id, number_of_tweets)
     all_tweet_details = process_tweet_details(raw_tweepy)
-
     all_tweet_emotions = []
-    emotion_list = dict()
 
     for raw_tweet in raw_tweepy:
       tweet_tokens = tokenize_text(raw_tweet.text)
       sanitized_tokens = sanitize_text(tweet_tokens)
       query = prepare_query(sanitized_tokens)
       word_emotion_results = query_emolex(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, query, sanitized_tokens)
-      emotions_most_strongly_associated = tally_emotion_scores_by_word(emotion_list, word_emotion_results)
-      highest_emotion_scores = score_emotions(emotions_most_strongly_associated)
-      top_emotion_scores = find_strongest_emotions_in_tweet(highest_emotion_scores)
-      process_emotions(all_tweet_emotions, top_emotion_scores, raw_tweet.id, raw_tweet.text)
-
+      word_emotion_scores = tally_emotion_scores_per_word(word_emotion_results)
+      top_emotions_per_word = find_strongest_emotions_per_word(word_emotion_scores)
+      top_emotions_in_tweet = score_emotions_in_all_words(top_emotions_per_word)
+      process_emotions(all_tweet_emotions, top_emotions_in_tweet, raw_tweet.id, raw_tweet.text)
 
     context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
     return context
