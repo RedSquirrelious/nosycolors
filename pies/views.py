@@ -1,15 +1,12 @@
 import csv
-
 from datetime import datetime
 import json
 import logging
-
 import os
 from operator import itemgetter
 import re
 import string
 import tweepy
-
 from django.conf import settings, urls
 from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
@@ -20,30 +17,22 @@ from django.template import RequestContext, loader
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
-
-
 from .forms import HandleForm
-
-
-# FOR LANGUAGE ANALYSIS
-## needed for MySQL
 
 import mysql.connector
 from mysql.connector import MySQLConnection, Error, connect, errorcode
 
 ## NLTK, language analysis
-import nltk.classify.util
-from nltk.classify import NaiveBayesClassifier
-from nltk.collocations import BigramCollocationFinder
 from nltk.metrics import *
-## import nltk.classify.util, nltk.metrics
 from nltk import word_tokenize, sent_tokenize
 from nltk.tokenize import TweetTokenizer
 from nltk.corpus import stopwords
 
 
-punct = list(string.punctuation)
-stopword_list = stopwords.words('english') + punct + ['rt', 'via', '...', '…']
+PUNCT = list(string.punctuation)
+STOPWORD_LIST = stopwords.words('english') + PUNCT + ['rt', 'via', '...', '…']
+
+EMOTION_QUERY = "SELECT w.word, e.emotion, w.count, wes.score, wes.word_id, wes.emotion_id, w.id, e.id FROM words w JOIN word_emotion_score wes ON wes.word_id = w.id JOIN emotions e ON e.id = wes.emotion_id WHERE w.word IN (%s)"
 
 logger = logging.getLogger(__name__)
 
@@ -57,180 +46,166 @@ class AboutView(TemplateView):
 class my404View(TemplateView):
     template_name = "404.html"
 
-def validate_form(request):
-  form = HandleForm(request.POST or None)
-  
-  if request.method == 'POST':
 
-    if form.is_valid():
-      screen_name = form.cleaned_data['screen_name']
-      number_of_tweets = form.cleaned_data['number_of_tweets']
-    else:
-      screen_name = ''
-      number_of_tweets = ''
-    
-    context = {'screen_name': screen_name, 'number_of_tweets': number_of_tweets}
-    
+def pie_data(request):
+  form_data = validate_form(request)
+  if not form_data['screen_name']:
+    messages.error(request, 'Please try again. Twitter handles must be alphanumeric (except for a starting "@"). Requested # of tweets must be > 0')
+    return HttpResponseRedirect('/')
+  try:
+    # gets user_id
+    user = settings.AUTHORIZED_USER.get_user(screen_name=form_data['screen_name'])
+    view_context_data = construct_view_context(user.id, form_data['number_of_tweets'])
+    context = {'tweet_emotions': json.dumps(view_context_data['tweet_emotions']), 'tweet_details': json.dumps(view_context_data['tweet_details'])}    
+    return render(request, 'pie_data.html', context)
+  except tweepy.TweepError as e:
+    emsg = e.api_code
+    print(emsg)
+    handle_tweepy_errors(request, emsg)
+
+
+def validate_form(request):
+    form = HandleForm(request.POST or None)  
+    if request.method == 'POST':
+      if form.is_valid():
+        screen_name = form.cleaned_data['screen_name']
+        number_of_tweets = form.cleaned_data['number_of_tweets']
+      else:
+        screen_name = ''
+        number_of_tweets = ''   
+      context = {'screen_name': screen_name, 'number_of_tweets': number_of_tweets}    
+      return context
+
+def construct_view_context(user_id, number_of_tweets):
+    raw_tweepy = get_tweets(user_id, number_of_tweets)
+    all_tweet_details = process_tweet_details(raw_tweepy)
+    all_tweet_emotions = []
+    for raw_tweet in raw_tweepy:
+      tweet_tokens = tokenize_text(raw_tweet.text)
+      sanitized_tokens = sanitize_text(tweet_tokens)
+      query = prepare_query(sanitized_tokens)
+      word_emotion_results = query_emolex(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, query, sanitized_tokens)
+      word_emotion_scores = tally_emotion_scores_per_word(word_emotion_results)
+      top_emotions_per_word = find_strongest_emotions_per_word(word_emotion_scores)
+      top_emotions_in_tweet = find_strongest_emotions_in_tweet(top_emotions_per_word)
+      process_emotions(all_tweet_emotions, top_emotions_in_tweet, raw_tweet.id, raw_tweet.text)
+    context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
     return context
 
 
-# NEEDED FOR CLASSIFY
-def process(text, tokenizer=TweetTokenizer(), stopwords=[]):
-
-  text = text.lower()
-  tokens = tokenizer.tokenize(text)
-
-  return [tok for tok in tokens if tok not in stopword_list and not tok.isdigit()]
-
-
-# NEEDED FOR CLASSIFY
-def query_emolex(host, database, user, password, tweet):
-
-  cnx = mysql.connector.connect(user=user, password=password, host=host, database=database)
-  cursor = cnx.cursor(dictionary=True)
-  tweet_words = process(tweet)
-# make sure tweets don't break the database
-  regex = re.compile('[^a-zA-Z]')
-
-  for i in range(len(tweet_words)):
-    tweet_words[i] = regex.sub('', tweet_words[i])
-
-  query = "SELECT w.word, e.emotion, w.count, wes.score, wes.word_id, wes.emotion_id, w.id, e.id FROM words w JOIN word_emotion_score wes ON wes.word_id = w.id JOIN emotions e ON e.id = wes.emotion_id WHERE w.word IN (%s)"
- 
-  in_p=', '.join(list(map(lambda x: '%s', tweet_words)))
-
-  query = query % in_p
-  
-  cursor.execute(query, tuple(tweet_words))
-
-  results = cursor.fetchall()
-
-  cursor.close()
-  cnx.close()
-
-  emotion_list = dict()
-
-  for word in results:
-    if word['word'] not in emotion_list:
-      emotion_list[word['word']] = []
-    
-    average_score = word['score']/word['count']
-    emotion_w_score = (word['emotion'], average_score)
-    emotion_list[word['word']].append(emotion_w_score)
-
-  return emotion_list
+def get_tweets(user_id, number_of_tweets):
+    try:
+      raw_tweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
+      return raw_tweepy
+    except tweepy.TweepError as e:
+      print (getExceptionMessage(e.reason))
+      pass  
 
 
-
-def find_strongest_emotions_in_tweet(host, database, user, database_key, tweet):
-
-  emotion_list = query_emolex(host, database, user, database_key, tweet)
-  final_scoring = dict()
-
-  for word in emotion_list:
-    highest_scoring_emotion = max(emotion_list[word], key=itemgetter(1))[0]
-    highest_score = max(emotion_list[word], key=itemgetter(1))[1]
-
-    final_scoring[word] = (highest_scoring_emotion, highest_score)
-
-  return final_scoring
-
-
-
-
-def show_top_emotion(emotion_dictionary):
-  emotion_hash = {"anger": 0, "anticipation": 0, "disgust": 0, "fear": 0, "joy": 0, "sadness": 0, "surprise": 0, "trust": 0}
-
-  for word in emotion_dictionary:
-    emotion = emotion_dictionary[word]
-    if emotion[0] == 'anger':
-      emotion_hash['anger'] += 1
-    if emotion[0] == 'anticipation':
-      emotion_hash['anticipation'] += 1
-    if emotion[0] == 'disgust':
-      emotion_hash['disgust'] += 1
-    if emotion[0] == 'fear':
-      emotion_hash['fear'] += 1
-    if emotion[0] == 'joy':
-      emotion_hash['joy'] += 1
-    if emotion[0] == 'sadness':
-      emotion_hash['sadness'] += 1
-    if emotion[0] == 'surprise':
-      emotion_hash['surprise'] += 1
-    if emotion[0] == 'trust':
-      emotion_hash['trust'] += 1
-  return emotion_hash.items()
-
-
-def process_tweets(user_id, number_of_tweets):
-
-  try:
-    rawtweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
-
-
-    all_tweet_emotions = []
+def process_tweet_details(raw_tweepy):
     all_tweet_details = []
-
-    for raw_tweet in rawtweepy:
-
+    for raw_tweet in raw_tweepy:
       tweet = {}
       tweet['text'] = raw_tweet.text
       tweet['id'] = raw_tweet.id_str
       tweet['created_at'] = str(raw_tweet.created_at)
       tweet['user'] = raw_tweet.user.name
       tweet['screen_name'] = raw_tweet.user.screen_name
-
       all_tweet_details.append(tweet)
-
-      emotions = find_strongest_emotions_in_tweet(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, raw_tweet.text)
-
-      count = show_top_emotion(emotions)
-
-      for emotion in count:
-        one_emotion_hash = {}
-
-        if emotion[1] > 0:
-          one_emotion_hash['emotion'] = emotion[0]
-          one_emotion_hash['score'] = emotion[1]
-          one_emotion_hash['tweet_id'] = raw_tweet.id
-          one_emotion_hash['tweet_text'] = raw_tweet.text
-
-          all_tweet_emotions.append(one_emotion_hash)
-
-      context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
-
-    return context
-  except tweepy.TweepError as e:
-    print (getExceptionMessage(e.reason))
-    pass
+    return all_tweet_details
 
 
+def tokenize_text(text, tokenizer=TweetTokenizer(), stopwords=[]):
+    text = text.lower()
+    tokens = tokenizer.tokenize(text)
+    return [tok for tok in tokens if tok not in STOPWORD_LIST and not tok.isdigit()]
+
+
+def sanitize_text(tokens):
+    regex = re.compile('[^a-zA-Z]')
+    for i in range(len(tokens)):
+      tokens[i] = regex.sub('', tokens[i])
+    return tokens
+
+
+def prepare_query(tweet_tokens):
+    in_p=', '.join(list(map(lambda x: '%s', tweet_tokens)))
+    query = EMOTION_QUERY % in_p
+    return query
+
+
+def query_emolex(host, database, user, password, query, tweet_tokens):
+    cnx = mysql.connector.connect(user=user, password=password, host=host, database=database)
+    cursor = cnx.cursor(dictionary=True)
+    cursor.execute(query, tuple(tweet_tokens))
+    results = cursor.fetchall()
+    cursor.close()
+    cnx.close()
+    return results
+
+
+# tally_emotion_scores_by_word takes all emolex results of all words in tweet and 
+# returns dictionary with word as key and emotion-score tuples as values 
+# e.g., {'car': [('anger', 0.0), ('anticipation', 0.5), ('disgust', 0.0), ('fear', 0.25), ('joy', 1.0), ('sadness', 0.0), ('surprise', 0.0), ('trust', 0.25)]
+def tally_emotion_scores_per_word(results):
+    word_emotions_scores = dict()
+    for word in results:
+      if word['word'] not in word_emotions_scores:
+        word_emotions_scores[word['word']] = []      
+      average_score = word['score']/word['count']
+      emotion_w_score = (word['emotion'], average_score)
+      word_emotions_scores[word['word']].append(emotion_w_score)
+    return word_emotions_scores
+
+
+def find_strongest_emotions_per_word(word_emotion_dict):
+    final_scoring = dict()
+    for word in word_emotion_dict:
+      highest_scoring_emotion = max(word_emotion_dict[word], key=itemgetter(1))[0]
+      highest_score = max(word_emotion_dict[word], key=itemgetter(1))[1]
+      final_scoring[word] = (highest_scoring_emotion, highest_score)
+    return final_scoring
+
+
+def find_strongest_emotions_in_tweet(tally):
+    emotion_scores = {"anger": 0, "anticipation": 0, "disgust": 0, "fear": 0, "joy": 0, "sadness": 0, "surprise": 0, "trust": 0}
+    for word in tally:
+      emotion = tally[word]
+      print(emotion)
+      if emotion[0] == 'anger':
+        emotion_scores['anger'] += 1
+      if emotion[0] == 'anticipation':
+        emotion_scores['anticipation'] += 1
+      if emotion[0] == 'disgust':
+        emotion_scores['disgust'] += 1
+      if emotion[0] == 'fear':
+        emotion_scores['fear'] += 1
+      if emotion[0] == 'joy':
+        emotion_scores['joy'] += 1
+      if emotion[0] == 'sadness':
+        emotion_scores['sadness'] += 1
+      if emotion[0] == 'surprise':
+        emotion_scores['surprise'] += 1
+      if emotion[0] == 'trust':
+        emotion_scores['trust'] += 1
+    return emotion_scores.items()
+
+
+def process_emotions(all_tweet_emotions, emotion_scores, raw_tweet_id, raw_tweet_text):
+    for emotion in emotion_scores:
+      one_emotion_hash = {}
+      if emotion[1] > 0:
+        one_emotion_hash['emotion'] = emotion[0]
+        one_emotion_hash['score'] = emotion[1]
+        one_emotion_hash['tweet_id'] = raw_tweet_id
+        one_emotion_hash['tweet_text'] = raw_tweet_text
+        all_tweet_emotions.append(one_emotion_hash)
 
 
 
 
-def pie_data(request):
 
-  form_data = validate_form(request)
 
-  if not form_data['screen_name']:
-    messages.error(request, 'Please try again. Twitter handles must be alphanumeric (except for a starting "@"). Requested # of tweets must be > 0')
-    return HttpResponseRedirect('/')
-
-  try:
-    print("HELLO")
-    user = settings.AUTHORIZED_USER.get_user(screen_name=form_data['screen_name'])
-    print("GOODBYE")
-    tweet_data = process_tweets(user.id, form_data['number_of_tweets'])
-
-    context = {'tweet_emotions': json.dumps(tweet_data['tweet_emotions']), 'tweet_details': json.dumps(tweet_data['tweet_details'])}
-    
-    return render(request, 'pie_data.html', context)
-
-  except tweepy.TweepError as e:
-    emsg = e.api_code
-    print(emsg)
-    handle_tweepy_errors(request, emsg)
 
 
 

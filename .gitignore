@@ -1,5 +1,6 @@
 .DS_store
 
+.idea/
 
 # SUBLIME ITEMS
 *.sublime-project
