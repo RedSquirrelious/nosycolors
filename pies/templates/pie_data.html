@@ -164,13 +164,31 @@ function clicked(d) {
   var thatpie = bigpie.replace(/[^0-9]/gi, '');
 
 
-  d3.select('#tweet_view')
-  .text("")
-  .html(function(d) { return "<p>[" + otherthing[thatpie].created_at + "] " + otherthing[thatpie].text; + "</p>"})
-  .attr("class", "small-12 columns")
-  // .style("font-style", "italic")
-  // .style("font-size", r/6+"px");
+  // var top = d3.select('#tweet_view')
+  // .text("")
+  // .html(function(d) { return "<p>[" + otherthing[thatpie].created_at + "] " + otherthing[thatpie].text + "</p>" + "<a>" + otherthing[thatpie].url + "</a>"})
+  // .attr("class", "small-12 columns")
 
+  var top = d3.select('#tweet_view')
+  .append("svg")
+  .attr("height", 200)
+  .attr("width", 400)
+
+  top.append("text")
+    .attr("x", 400)
+    .attr("y", 200)
+    .style("font-size", "1rem")
+    .text(otherthing[thatpie].text)
+
+  top.append("a")
+    .attr("xlink:href", otherthing[thatpie].url)
+    .append("rect")
+      .attr("height", 200)
+      .attr("width", 400)
+      .attr("fill", "none")
+
+
+  
 };
 
 

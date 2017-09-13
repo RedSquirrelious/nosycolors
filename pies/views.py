@@ -109,6 +109,11 @@ def process_tweet_details(raw_tweepy):
       tweet['text'] = raw_tweet.text
       tweet['id'] = raw_tweet.id_str
       tweet['created_at'] = str(raw_tweet.created_at)
+      # LINK TO ARTICLE IN TWEET
+      if len(raw_tweet.entities['urls']) != 0:
+        tweet['embedded_link'] = raw_tweet.entities['urls'][0]['url']
+      tweet['url'] = "https://twitter.com/statuses/" + raw_tweet.id_str
+      tweet['source'] = raw_tweet.source
       tweet['user'] = raw_tweet.user.name
       tweet['screen_name'] = raw_tweet.user.screen_name
       all_tweet_details.append(tweet)
@@ -171,7 +176,6 @@ def find_strongest_emotions_in_tweet(tally):
     emotion_scores = {"anger": 0, "anticipation": 0, "disgust": 0, "fear": 0, "joy": 0, "sadness": 0, "surprise": 0, "trust": 0}
     for word in tally:
       emotion = tally[word]
-      print(emotion)
       if emotion[0] == 'anger':
         emotion_scores['anger'] += 1
       if emotion[0] == 'anticipation':
