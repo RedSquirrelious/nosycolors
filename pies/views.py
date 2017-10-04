@@ -11,6 +11,7 @@ from django.conf import settings, urls
 from django.contrib import messages
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
+
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect, render_to_response
 from django.template import RequestContext, loader
@@ -48,33 +49,45 @@ class my404View(TemplateView):
 
 
 def pie_data(request):
-  form_data = validate_form(request)
-  if not form_data['screen_name']:
-    messages.error(request, 'Please try again. Twitter handles must be alphanumeric (except for a starting "@"). Requested # of tweets must be > 0')
-    return HttpResponseRedirect('/')
-  try:
-    # gets user_id
-    user = settings.AUTHORIZED_USER.get_user(screen_name=form_data['screen_name'])
-    view_context_data = construct_view_context(user.id, form_data['number_of_tweets'])
-    context = {'tweet_emotions': json.dumps(view_context_data['tweet_emotions']), 'tweet_details': json.dumps(view_context_data['tweet_details'])}    
-    return render(request, 'pie_data.html', context)
-  except tweepy.TweepError as e:
-    emsg = e.api_code
-    print(emsg)
-    handle_tweepy_errors(request, emsg)
+    try:
+        form_data = validate_form(request)
 
+    except ValidationError as e:
+        error_messages = handle_error_message(e.error_dict)
+        for msg in error_messages:
+            messages.error(request, msg)
+        return HttpResponseRedirect('/')
+
+    except tweepy.TweepError as e:
+        emsg = e.api_code
+        print(emsg)
+        handle_tweepy_errors(request, emsg)
+    else:
+        user = settings.AUTHORIZED_USER.get_user(screen_name=form_data['screen_name'])
+        view_context_data = construct_view_context(user.id, form_data['number_of_tweets'])
+        context = {'tweet_emotions': json.dumps(view_context_data['tweet_emotions']), 'tweet_details': json.dumps(view_context_data['tweet_details'])}
+        return render(request, 'pie_data.html', context)
 
 def validate_form(request):
     form = HandleForm(request.POST or None)  
     if request.method == 'POST':
-      if form.is_valid():
-        screen_name = form.cleaned_data['screen_name']
-        number_of_tweets = form.cleaned_data['number_of_tweets']
-      else:
-        screen_name = ''
-        number_of_tweets = ''   
-      context = {'screen_name': screen_name, 'number_of_tweets': number_of_tweets}    
-      return context
+        if form.is_valid():
+            context = {'screen_name': form.cleaned_data['screen_name'], 'number_of_tweets': form.cleaned_data['number_of_tweets']}
+            return context
+        else:
+            raise ValidationError(form.errors)
+
+
+def handle_error_message(e):
+    messages = []
+    if 'screen_name' in e.keys():
+        x = str(e['screen_name'][0])
+        messages.append(x[2:-2])
+    if 'number_of_tweets' in e.keys():
+        y = str(e['number_of_tweets'][0])
+        messages.append(y[2:-2])
+    return messages
+
 
 def construct_view_context(user_id, number_of_tweets):
     raw_tweepy = get_tweets(user_id, number_of_tweets)
