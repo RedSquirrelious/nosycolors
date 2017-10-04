@@ -7,6 +7,8 @@ from tweepy import OAuthHandler, AppAuthHandler
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #STATICFILES_ROOT = (os.path.join(BASE_DIR, 'static'))
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'deployment', 'collected_static')
+
 
 STATICFILES_FINDERS = ( 
     'django.contrib.staticfiles.finders.FileSystemFinder',
