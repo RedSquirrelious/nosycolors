@@ -38,9 +38,9 @@
     <div class="row nosy">
       <h2 class="nosy_query small-12 small-centered medium-12">So... <i>Nosy Person</i>... they're feeling... <i>all these feels...</i></h2>
 
-  <section id='hold_tweet_view' class='row'>
+  <section id='hold_tweet_view' class='row nosy'>
     
-    <article id='tweet_view' class="small-12 small-centered columns"></article>
+    <article id='tweet_view' class="small-12 small-centered medium-12"></article>
   
   </section>
 </div>
@@ -157,20 +157,37 @@ var g = svg.selectAll('g')
 
 function clicked(d) {
 
-  var mypie = d3.select(this);
+    var mypie = d3.select(this);
 
-  var bigpie = ("#"+mypie[0][0].viewportElement.id);
+    var bigpie = ("#"+mypie[0][0].viewportElement.id);
 
-  var thatpie = bigpie.replace(/[^0-9]/gi, '');
+    var thatpie = bigpie.replace(/[^0-9]/gi, '');
 
 
-  d3.select('#tweet_view')
-  .text("")
-  .html(function(d) { return "<p>[" + otherthing[thatpie].created_at + "] " + otherthing[thatpie].text; + "</p>"})
-  .attr("class", "small-12 columns")
-  // .style("font-style", "italic")
-  // .style("font-size", r/6+"px");
+{#    var top = d3.select('#tweet_view')#}
+{#    .text("")#}
+{#    .html(function(d) { return "<p>[" + otherthing[thatpie].created_at + "] " + otherthing[thatpie].text + "</p>" + "<a>" + otherthing[thatpie].url + "</a>"})#}
+{#    .attr("class", "small-12 columns")#}
 
+
+
+    var top = d3.select('#tweet_view')
+
+    top.selectAll("*").remove()
+
+    top.append("a")
+        .attr("xlink:href", otherthing[thatpie].url)
+        .attr("class", "twitter_url")
+    .append("text")
+    .attr("x", 200)
+    .attr("y", 200)
+    .attr("id", "tweet_text")
+    .style("font-size", "1rem")
+    .text(otherthing[thatpie].text)
+    .on("click", function() {window.open(otherthing[thatpie].url);});
+
+
+  
 };
 
 
