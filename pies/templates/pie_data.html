@@ -31,10 +31,12 @@
      </div>
     <div class="row nosy">
       <h2 class="nosy_query small-12 small-centered medium-12">So... <i>Nosy Person</i>... they're feeling... <i>all these feels...</i></h2>
-      <section id='hold_tweet_view' class='row nosy'>
-        <article id='tweet_view' class="small-12 small-centered medium-12"></article>
-      </section>
     </div>
+
+        <div id='hold_tweet_view' class='row'>
+            <div id='tweet_view' class="small-12 small-centered medium-12"></div>
+      </div>
+
     <div class='testpie_pan row'>
     <div class='testpie small-12 columns'>
     </div>
@@ -115,7 +117,7 @@ var g = svg.selectAll('g')
 
   g.on("mouseover", function(obj){
     svg.select("#tweet_text_"+ obj.data.tweet_id)
-    .attr("fill", function(d) { return color(obj.data.emotion); })
+    .attr("fill", function(d) { return color(visible_colors(obj.data.emotion)); })
     .attr("font-weight", "bold")
     .style("font-size", r/6+"px")
     .text(function(d){
@@ -126,40 +128,36 @@ var g = svg.selectAll('g')
 
   svg.on("click", clicked);
 
+  var tooltip = d3.select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .style("background", "#000")
+    .text("a simple tooltip");
 
 function clicked(d) {
     var mypie = d3.select(this);
 
-
     var bigpie = ("#" + mypie[0][0].viewportElement.id);
-
 
     var thatpie = bigpie.replace(/[^0-9]/gi, '');
 
-{#    var top = d3.select('#tweet_view')#}
-{#        .text("")#}
-{#        .html(function (d) {#}
-{#            return "<p>[" + otherthing[thatpie].created_at + "] " + otherthing[thatpie].text + "</p>" + "<a>" + otherthing[thatpie].url + "</a>"#}
-{#        })#}
-{#        .attr("class", "small-12 columns")#}
-
-{##}
-    var top = d3.select('#tweet_view')
+    var top = d3.select('#tweet_view');
 
 
-    top.selectAll("*").remove()
-
+    top.selectAll("*").remove();
 
     top.append("a")
         .attr("xlink:href", otherthing[thatpie].url)
-        .attr("class", "twitter_url")
+        .attr("id", "twitter_url")
+        .attr("z-index", "2")
     .append("text")
-    .attr("x", 200)
-    .attr("y", 200)
     .attr("id", "tweet_text")
     .style("font-size", "1rem")
         .style("class", "twitter_url")
     .text(otherthing[thatpie].text)
+        .on("mouseover", )
     .on("click", function() {window.open(otherthing[thatpie].url);});
 };
 
@@ -174,6 +172,14 @@ function resize_text(d) {
         big_d = d.toUpperCase();
     }
     return big_d;
+};
+
+function visible_colors(d) {
+    if (d == 'joy')
+    {
+        d = 'fear';
+    }
+    return d;
 };
 
 </script>
