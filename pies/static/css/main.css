@@ -1,14 +1,13 @@
 .top-bar.expanded .title-area, .contain-to-grid, .top-bar, .top-bar-section ul, .top-bar-section li:not(.has-form) a:not(.button)  { background: #944fba;
-      border-bottom: solid black;
-      border-width: 3px;
-       }
+  border-bottom: solid black;
+  border-width: 3px;
+ }
 
 .top-bar-title h1 {
   color: white;
   font-size: 5rem;
   margin-left: 2rem;
   font-family: 'Cherry Cream Soda', cursive;
-
 }
 
 .top-bar-left h5 {
@@ -19,9 +18,6 @@
   background-color: #944fba;
 }
 
-.panel {
-
-}
 
 header.row {
   background-color: #944fba;
@@ -35,7 +31,6 @@ header.row {
   padding: 2%;
   display: block;
   margin: 0 2%;
-
 }
 
 
@@ -68,15 +63,6 @@ header.row {
   border-width: 1px;
 }
 
-/*div.nosy_query {
-  margin: 1rem 0;
-}*/
-
-/*.nosy {
-  display: inline-flex;
-  justify-content: center;
-}*/
-
 .nosy_query {
   margin: 1rem;
   font-family: 'Lato', sans-serif;
@@ -85,11 +71,10 @@ header.row {
 
 .nosy_form h2 {
   font-family: 'Lato', sans-serif;
-  margin-bottom: 1rem;  
+  margin-bottom: 1rem;
 }
 
 .nosy_form {
-
   font-family: 'Lato', sans-serif;
 }
 
@@ -101,10 +86,8 @@ label.nosy_form {
 
 
 .callout {
-  /*margin-top: 1rem;*/
   padding: 2rem;
   margin: 1rem;
-
 }
 
 .callout h4 {
@@ -124,20 +107,17 @@ a:visited {
 }
 
 
-#hold_tweetview {
+section#hold_tweet_view {
   display: flex;
   justify-content: center;
   margin: auto;
   padding: 1rem;
 }
 
-#tweet_view {
-  /*display: block;*/
-  margin: 0 1rem 2rem 1rem;
-  /*font-size: 1.5rem;*/
-  /*width: 80%;
-  font-style: italic;
-  font-size: 1rem;*/
+a#twitter_url {
+  display: flex;
+  justify-content: left;
+  margin: 0 1rem 1rem 1rem;
 }
 
 
@@ -152,14 +132,6 @@ a:visited {
   display: inline-block;
 }
 
-/*.tweet {
-  float: center;
-}*/
-
-/*#about {
-  display:block;
-  width: 80%;
-}*/
 
 div.logo {
   display: flex;
@@ -178,11 +150,7 @@ div.logo {
 img.logo {
   float: left;
 }
-/*
-ul .message {
-  color: red;
-}
-*/
+
 #deal {
   margin-bottom: 1rem;
 }
