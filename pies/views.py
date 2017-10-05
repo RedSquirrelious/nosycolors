@@ -94,14 +94,19 @@ def construct_view_context(user_id, number_of_tweets):
     all_tweet_details = process_tweet_details(raw_tweepy)
     all_tweet_emotions = []
     for raw_tweet in raw_tweepy:
-      tweet_tokens = tokenize_text(raw_tweet.text)
-      sanitized_tokens = sanitize_text(tweet_tokens)
-      query = prepare_query(sanitized_tokens)
-      word_emotion_results = query_emolex(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, query, sanitized_tokens)
-      word_emotion_scores = tally_emotion_scores_per_word(word_emotion_results)
-      top_emotions_per_word = find_strongest_emotions_per_word(word_emotion_scores)
-      top_emotions_in_tweet = find_strongest_emotions_in_tweet(top_emotions_per_word)
-      process_emotions(all_tweet_emotions, top_emotions_in_tweet, raw_tweet.id, raw_tweet.text)
+        tweet_tokens = tokenize_text(raw_tweet.text)
+        sanitized_tokens = sanitize_text(tweet_tokens)
+        query = prepare_query(sanitized_tokens)
+        word_emotion_results = query_emolex(settings.HOST, settings.DATABASE_NAME, settings.USER_NAME, settings.DATABASE_KEY, query, sanitized_tokens)
+
+        if not word_emotion_results:
+            process_null_emotions(all_tweet_emotions, raw_tweet.id, raw_tweet.text)
+        else:
+            word_emotion_scores = tally_emotion_scores_per_word(word_emotion_results)
+            top_emotions_per_word = find_strongest_emotions_per_word(word_emotion_scores)
+            top_emotions_in_tweet = find_strongest_emotions_in_tweet(top_emotions_per_word)
+            process_emotions(all_tweet_emotions, top_emotions_in_tweet, raw_tweet.id, raw_tweet.text)
+
     context = {'tweet_emotions': all_tweet_emotions, 'tweet_details': all_tweet_details}
     return context
 
@@ -111,7 +116,6 @@ def get_tweets(user_id, number_of_tweets):
       raw_tweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
       return raw_tweepy
     except tweepy.TweepError as e:
-      print (getExceptionMessage(e.reason))
       pass  
 
 
@@ -219,8 +223,13 @@ def process_emotions(all_tweet_emotions, emotion_scores, raw_tweet_id, raw_tweet
         all_tweet_emotions.append(one_emotion_hash)
 
 
-
-
+def process_null_emotions(all_tweet_emotions, raw_tweet_id, raw_tweet_text):
+    null_emotion_hash = {}
+    null_emotion_hash['emotion'] = 'UNKNOWN'
+    null_emotion_hash['score'] = 1
+    null_emotion_hash['tweet_id'] = raw_tweet_id
+    null_emotion_hash['tweet_text'] = raw_tweet_text
+    all_tweet_emotions.append(null_emotion_hash)
 
 
 
