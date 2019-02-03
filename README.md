@@ -9,12 +9,6 @@ Find NosyColors online [here](http://redsquirrelious.io).
 * Creates donut charts with colored sections according to the emotional valence.  Accuracy is a work-in-progress, but it seems to hit the mark more often than not, which is fun.  
 * Clicking on a chart brings up text from the tweet.  
 
-## The Stack (mostly new to me, JS/JQuery excepted)
-* Python (including Tweepy and NLTK)
-* Django
-* JavaScript (including D3 and JQuery)
-* MySQL
-* AWS Elastic Beanstalk
 
 
 
