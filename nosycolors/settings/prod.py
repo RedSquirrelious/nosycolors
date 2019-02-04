@@ -1,4 +1,6 @@
 from nosycolors.settings.base import *
+from dotenv import load_dotenv
+load_dotenv()
 
 SECRET_KEY = os.environ['SECRET_KEY']
 USER_NAME = os.environ['DB_USER']
@@ -24,13 +26,11 @@ DATABASES = {
   }
 }
 
-
 DEBUG = False
 
 TWITTER_AUTH = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 
 AUTHORIZED_USER = tweepy.API(TWITTER_AUTH, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'deployment', 'collected_static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'deployment', 'media')

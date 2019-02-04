@@ -2,7 +2,8 @@ import os
 import ast
 import tweepy
 from tweepy import OAuthHandler, AppAuthHandler
-
+from dotenv import load_dotenv
+load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #STATICFILES_ROOT = (os.path.join(BASE_DIR, 'static'))
@@ -10,7 +11,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'deployment', 'collected_static')
 
 
-STATICFILES_FINDERS = ( 
+STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',

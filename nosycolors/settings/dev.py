@@ -27,7 +27,7 @@ DATABASES = {
     'HOST': os.environ['NC_HOST'],
     'PORT': os.environ['NC_PORT'],
   }
-  }
+}
 
 DEBUG = True
 
