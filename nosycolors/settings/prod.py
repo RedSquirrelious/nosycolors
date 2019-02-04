@@ -11,7 +11,7 @@ ACCESS_SECRET = os.environ['ACCESS_SECRET']
 CALLBACK_URL = os.environ['CALLBACK_URL']
 HOST = os.environ['HOST']
 PORT = os.environ['PORT']
-
+ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS']
 
 DATABASES = {
   'default': {
@@ -26,8 +26,6 @@ DATABASES = {
 
 
 DEBUG = False
-
-ALLOWED_HOSTS = ['color-env.4yydtwdmva.us-west-2.elasticbeanstalk.com', 'www.redsquirrelious.io', 'redsquirrelious.io']
 
 TWITTER_AUTH = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 
