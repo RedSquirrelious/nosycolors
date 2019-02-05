@@ -31,7 +31,9 @@ from nltk.corpus import stopwords
 
 from applicationinsights import TelemetryClient
 tc = TelemetryClient(settings.APPINSIGHTS_INSTRUMENTATIONKEY)
-tc.track_event('Hello World')
+logMessage = 'Hello World from the laptop'
+print(logMessage)
+tc.track_event(logMessage)
 tc.flush()
 
 PUNCT = list(string.punctuation)
