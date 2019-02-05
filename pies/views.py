@@ -29,6 +29,10 @@ from nltk import word_tokenize, sent_tokenize
 from nltk.tokenize import TweetTokenizer
 from nltk.corpus import stopwords
 
+from applicationinsights import TelemetryClient
+tc = TelemetryClient(settings.APPINSIGHTS_INSTRUMENTATIONKEY)
+tc.track_event('Hello World')
+tc.flush()
 
 PUNCT = list(string.punctuation)
 STOPWORD_LIST = stopwords.words('english') + PUNCT + ['rt', 'via', '...', '…']
@@ -69,7 +73,7 @@ def pie_data(request):
         return render(request, 'pie_data.html', context)
 
 def validate_form(request):
-    form = HandleForm(request.POST or None)  
+    form = HandleForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             context = {'screen_name': form.cleaned_data['screen_name'], 'number_of_tweets': form.cleaned_data['number_of_tweets']}
@@ -116,7 +120,7 @@ def get_tweets(user_id, number_of_tweets):
       raw_tweepy = settings.AUTHORIZED_USER.user_timeline(user_id=user_id, count=number_of_tweets)
       return raw_tweepy
     except tweepy.TweepError as e:
-      pass  
+      pass
 
 
 def process_tweet_details(raw_tweepy):
@@ -166,14 +170,14 @@ def query_emolex(host, database, user, password, query, tweet_tokens):
     return results
 
 
-# tally_emotion_scores_by_word takes all emolex results of all words in tweet and 
-# returns dictionary with word as key and emotion-score tuples as values 
+# tally_emotion_scores_by_word takes all emolex results of all words in tweet and
+# returns dictionary with word as key and emotion-score tuples as values
 # e.g., {'car': [('anger', 0.0), ('anticipation', 0.5), ('disgust', 0.0), ('fear', 0.25), ('joy', 1.0), ('sadness', 0.0), ('surprise', 0.0), ('trust', 0.25)]
 def tally_emotion_scores_per_word(results):
     word_emotions_scores = dict()
     for word in results:
       if word['word'] not in word_emotions_scores:
-        word_emotions_scores[word['word']] = []      
+        word_emotions_scores[word['word']] = []
       average_score = word['score']/word['count']
       emotion_w_score = (word['emotion'], average_score)
       word_emotions_scores[word['word']].append(emotion_w_score)
@@ -261,7 +265,7 @@ def hash_pie(request):
 
       screen_name = form.cleaned_data['screen_name']
       number_of_tweets = form.cleaned_data['number_of_tweets']
-  
+
       hashtaggery = settings.AUTHORIZED_USER.search(q=screen_name, lang='en')
 
       all_tweet_details = []

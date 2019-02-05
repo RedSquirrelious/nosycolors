@@ -12,4 +12,5 @@ requests==2.21.0
 requests-oauthlib==1.2.0
 six==1.12.0
 python-dotenv==0.10.1
+applicationinsights==0.11.7
 -e git://github.com/tweepy/tweepy.git#egg=tweepy
