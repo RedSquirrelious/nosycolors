@@ -1,5 +1,7 @@
 import os
 import ast
+import logging
+
 import tweepy
 from tweepy import OAuthHandler, AppAuthHandler
 from dotenv import load_dotenv
@@ -10,6 +12,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'deployment', 'collected_static')
 
+APPINSIGHTS_INSTRUMENTATIONKEY = os.environ['APPINSIGHTS_INSTRUMENTATIONKEY']
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -36,6 +39,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'applicationinsights.django.ApplicationInsightsMiddleware',
 ]
 
 ROOT_URLCONF = 'nosycolors.urls'
@@ -85,5 +89,45 @@ USE_L10N = True
 
 USE_TZ = True
 
+APPLICATION_INSIGHTS = {
+    # (required) Your Application Insights instrumentation key
+    'ikey': APPINSIGHTS_INSTRUMENTATIONKEY,
 
+    # (optional) By default, request names are logged as the request method
+    # and relative path of the URL.  To log the fully-qualified view names
+    # instead, set this to True.  Defaults to False.
+    'use_view_name': True,
 
+    # (optional) To log arguments passed into the views as custom properties,
+    # set this to True.  Defaults to False.
+    'record_view_arguments': False,
+
+    # (optional) Exceptions are logged by default, to disable, set this to False.
+    'log_exceptions': True,
+
+    # (optional) Events are submitted to Application Insights asynchronously.
+    # send_interval specifies how often the queue is checked for items to submit.
+    # send_time specifies how long the sender waits for new input before recycling
+    # the background thread.
+    'send_interval': 1.0, # Check every second
+    'send_time': 3.0, # Wait up to 3 seconds for an event
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        # The application insights handler is here
+        'appinsights': {
+            'class': 'applicationinsights.django.LoggingHandler',
+            'level': 'WARNING'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['appinsights'],
+            'level': 'WARNING',
+            'propagate': True,
+        }
+    }
+}
