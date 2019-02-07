@@ -10,4 +10,6 @@ urlpatterns = [
     url(r'^hash_pie/$', views.hash_pie, name='hash_pie'),
 ]
 
-handler400 = views.bad_request
+handler400 = 'views.bad_request'
+
+handler500 = 'views.server_error'

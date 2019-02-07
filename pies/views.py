@@ -323,3 +323,8 @@ def bad_request(request):
   # response.status_code = 400
   response =  HttpResponseNotFound('<h1>Page not found</h1>')
   return response
+
+def server_error(request):
+  context = RequestContext(request)
+  tc.track_event(context)
+  tc.flush()
