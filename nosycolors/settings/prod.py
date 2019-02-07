@@ -26,7 +26,7 @@ DATABASES = {
   }
 }
 
-DEBUG = False
+DEBUG = True
 
 TWITTER_AUTH = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 

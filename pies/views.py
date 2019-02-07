@@ -325,6 +325,8 @@ def bad_request(request):
   return response
 
 def server_error(request):
+  tc2 = TelemetryClient(settings.APPINSIGHTS_INSTRUMENTATIONKEY)
   context = RequestContext(request)
-  tc.track_event(context)
-  tc.flush()
+  tc2.track_event('server error')
+  tc2.track_event(context)
+  tc2.flush()
