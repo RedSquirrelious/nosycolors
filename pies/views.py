@@ -34,9 +34,6 @@ tc = TelemetryClient(settings.APPINSIGHTS_INSTRUMENTATIONKEY)
 logMessage = 'Hello World from the app insights branch'
 print(logMessage)
 tc.track_event(logMessage)
-myHosts = "my hosts are " + settings.ALLOWED_HOSTS
-print(myHosts)
-tc.track_event(myHosts)
 tc.flush()
 
 PUNCT = list(string.punctuation)

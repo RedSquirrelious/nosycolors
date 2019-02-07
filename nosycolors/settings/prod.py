@@ -13,7 +13,7 @@ ACCESS_SECRET = os.environ['ACCESS_SECRET']
 CALLBACK_URL = os.environ['CALLBACK_URL']
 HOST = os.environ['HOST']
 PORT = os.environ['PORT']
-ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS']
+ALLOWED_HOSTS = ['nosycolors.azurewebsites.net']
 
 DATABASES = {
   'default': {
