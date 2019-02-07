@@ -23,9 +23,6 @@ from .forms import HandleForm
 import mysql.connector
 from mysql.connector import MySQLConnection, Error, connect, errorcode
 
-## NLTK, language analysis
-from nltk.metrics import *
-from nltk import word_tokenize, sent_tokenize
 from nltk.tokenize import TweetTokenizer
 from nltk.corpus import stopwords
 
